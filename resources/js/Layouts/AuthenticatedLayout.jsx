@@ -37,6 +37,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Company
                                 </NavLink>
+                                <NavLink
+                                    href={route('department.index')}
+                                    active={route().current('department.index')}
+                                >
+                                    Department
+                                </NavLink>
                             </div>
                         </div>
 
