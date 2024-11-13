@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DepartmentController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -26,6 +27,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth:sanctum'])->resource('/company', CompanyController::class);
-
+Route::middleware(['auth:sanctum'])->resource('/department', DepartmentController::class);
 
 require __DIR__.'/auth.php';
