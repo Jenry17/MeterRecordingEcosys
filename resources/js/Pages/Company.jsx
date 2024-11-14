@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Dashboard({ companies }) {
     console.log(companies);
@@ -34,7 +34,7 @@ export default function Dashboard({ companies }) {
                             <th scope="col" className="px-6 py-3">
                                 Company Code
                             </th>
-                            <th scope="col" className="px-6 py-3 text-center">
+                            <th scope="col" className="px-6 py-3">
                                 Actions
                             </th>
                         </tr>
@@ -53,13 +53,12 @@ export default function Dashboard({ companies }) {
                                         {items.company_code}
                                     </td>
                                     <td className="px-6 py-4 flex justify-center space-x-2">
-                                        <button className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                            Edit
-                                        </button>
-
-                                        <button className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-                                            Delete
-                                        </button>
+                                        <Link
+                                            href={`/company/${items.id}`}
+                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-link"
+                                        >
+                                            Show Details
+                                        </Link>
                                     </td>
                                 </tr>
                             ))

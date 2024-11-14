@@ -15,7 +15,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companyData = Company::select('id','company_name','company_code')->paginate(5);
+        $companyData = Company::select('id', 'company_name', 'company_code')->paginate(5);
         return Inertia::render('Company', [
             'companies' => $companyData,
         ]);
@@ -26,7 +26,7 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Modules/Company/CreateEdit');
+        return Inertia::render('Modules/Company/Create');
     }
 
     /**
@@ -35,7 +35,7 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         sleep(2);
-        
+
         $fields = $request->validate([
             'company_name' => ['required'],
             'company_code' => ['required']
@@ -49,9 +49,20 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Company $company)
+    public function show($id)
     {
-        //
+
+        // Fetch the post from the database by its ID
+        $company = Company::findOrFail($id);
+
+        // Return the post data to the Inertia page
+        return Inertia::render('Modules/Company/ShowUpdateDelete', [
+            'companies' => $company
+        ]);
+        // $company = Company::select('id', 'company_name', 'company_code')->get();
+        // return Inertia::render('Modules/Company/ShowUpdateDelete', [
+        //     'companies' => $company,
+        // ]);
     }
 
     /**
@@ -75,6 +86,6 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        dd($company);
     }
 }
