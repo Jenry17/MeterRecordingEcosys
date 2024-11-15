@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Company;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 
 class CompanyController extends Controller
