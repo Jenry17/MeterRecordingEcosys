@@ -27,7 +27,7 @@ class DepartmentController extends Controller
     {
         //
         return Inertia::render('Modules/Department/Create', [
-            'companies' => '1213',
+            // 'companies' => '1213',
         ]);
     }
 

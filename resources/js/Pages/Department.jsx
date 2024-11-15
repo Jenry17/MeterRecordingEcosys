@@ -1,9 +1,14 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
-
+import PrimaryButton from "@/Components/PrimaryButton";
+import NavLink from "@/Components/NavLink";
 export default function Dashboard({ companies }) {
-    console.log(companies);
+    console.log(companies); 
 
+    function goToCreate(){
+        window.location.href = route('department.create')
+    }
+    
     return (
         <AuthenticatedLayout
             header={
@@ -13,19 +18,16 @@ export default function Dashboard({ companies }) {
             }
         >
             <Head title="Dashboard" />
-
-            <div className="mb-6">
-                <a
-                    type="button"
-                    href={route("department.create")}
-                    className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-3 shadow-md transition-all"
-                >
-                    Register New Department
-                </a>
-            </div>
-
-            <div className="relative overflow-x-auto bg-white shadow-lg rounded-lg">
-               
+           <div className="py-12">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                        <div className="p-6 text-gray-900">
+                        <PrimaryButton className="ms-4" onClick={goToCreate} >
+                            Add New Department 
+                        </PrimaryButton>
+                        </div>
+                    </div>
+                </div>
             </div>
         </AuthenticatedLayout>
     );
