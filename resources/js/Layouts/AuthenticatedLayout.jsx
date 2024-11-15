@@ -43,6 +43,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Department
                                 </NavLink>
+
+                                <NavLink
+                                    href={route('meter.index')}
+                                    active={route().current('meter.index')}
+                                >
+                                    Meter
+                                </NavLink>
+
+
                             </div>
                         </div>
 
