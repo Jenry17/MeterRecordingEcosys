@@ -35,7 +35,7 @@ export default function Dashboard({ meter }) {
                 <div className="mb-6">
                     <InputLabel htmlFor="department_id" value="Department Id" />
                     <div className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
-                        {meter.department_Id || 'N/A'}
+                        {meter.department_id || 'N/A'}
                     </div>
                 </div>
         

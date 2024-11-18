@@ -1,24 +1,50 @@
-// ModalUpdate.js
-import { useState, useEffect } from 'react';
+import { useForm } from '@inertiajs/react';
+import { useRef, useEffect } from 'react';
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import PrimaryButton from '@/Components/PrimaryButton';
+import TextInput from '@/Components/TextInput';
+import { Transition } from '@headlessui/react';
 
 export default function ModalUpdate({ isOpen, onClose, company, onUpdate }) {
-    const [companyName, setCompanyName] = useState('');
-    const [companyCode, setCompanyCode] = useState('');
+    const companyNameInput = useRef();
+    const companyCodeInput = useRef();
 
-    // This effect runs when `company` is updated (e.g., when the modal opens)
+    const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
+        company_name: '',
+        company_code: '',
+    });
+
+    // Populate form with existing company data when modal is opened
     useEffect(() => {
         if (company) {
-            setCompanyName(company.company_name);
-            setCompanyCode(company.company_code);
+            setData('company_name', company.company_name);
+            setData('company_code', company.company_code);
         }
     }, [company]);
 
-    const handleSubmit = (e) => {
+    const updateCompany = (e) => {
         e.preventDefault();
-        if (companyName && companyCode) {
-            onUpdate({ company_name: companyName, company_code: companyCode });
-            onClose();
-        }
+
+        // Use `put` method to update company data in the database
+        put(route('companies.update', company.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                onUpdate(); // Optionally, update the parent state with the updated company
+                onClose(); // Close the modal after successful update
+            },
+            onError: (errors) => {
+                // Handle form validation errors
+                if (errors.company_name) {
+                    companyNameInput.current.focus();
+                }
+
+                if (errors.company_code) {
+                    companyCodeInput.current.focus();
+                }
+            },
+        });
     };
 
     if (!isOpen) return null;
@@ -27,29 +53,31 @@ export default function ModalUpdate({ isOpen, onClose, company, onUpdate }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg w-96">
                 <h3 className="text-xl font-semibold mb-4">Update Company</h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label htmlFor="company_name" className="block text-sm font-medium text-gray-700">Company Name</label>
-                        <input
-                            type="text"
+                <form onSubmit={updateCompany} className="space-y-6">
+                    <div>
+                        <InputLabel htmlFor="company_name" value="Company Name" />
+                        <TextInput
                             id="company_name"
-                            value={companyName}
-                            onChange={(e) => setCompanyName(e.target.value)}
-                            className="w-full mt-2 p-2 border border-gray-300 rounded-md"
-                            required
+                            ref={companyNameInput}
+                            value={data.company_name}
+                            onChange={(e) => setData('company_name', e.target.value)}
+                            className="mt-1 block w-full"
                         />
+                        <InputError message={errors.company_name} className="mt-2" />
                     </div>
-                    <div className="mb-4">
-                        <label htmlFor="company_code" className="block text-sm font-medium text-gray-700">Company Code</label>
-                        <input
-                            type="text"
+
+                    <div>
+                        <InputLabel htmlFor="company_code" value="Company Code" />
+                        <TextInput
                             id="company_code"
-                            value={companyCode}
-                            onChange={(e) => setCompanyCode(e.target.value)}
-                            className="w-full mt-2 p-2 border border-gray-300 rounded-md"
-                            required
+                            ref={companyCodeInput}
+                            value={data.company_code}
+                            onChange={(e) => setData('company_code', e.target.value)}
+                            className="mt-1 block w-full"
                         />
+                        <InputError message={errors.company_code} className="mt-2" />
                     </div>
+
                     <div className="flex justify-between">
                         <button
                             type="button"
@@ -58,13 +86,21 @@ export default function ModalUpdate({ isOpen, onClose, company, onUpdate }) {
                         >
                             Cancel
                         </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
-                        >
-                            Update
-                        </button>
+
+                        <PrimaryButton type="submit" disabled={processing}>
+                            {processing ? 'Updating...' : 'Update'}
+                        </PrimaryButton>
                     </div>
+
+                    <Transition
+                        show={recentlySuccessful}
+                        enter="transition ease-in-out"
+                        enterFrom="opacity-0"
+                        leave="transition ease-in-out"
+                        leaveTo="opacity-0"
+                    >
+                        <p className="text-sm text-gray-600">Saved.</p>
+                    </Transition>
                 </form>
             </div>
         </div>
