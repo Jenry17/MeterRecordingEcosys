@@ -23,14 +23,14 @@ export default function Register() {
 
             <div className="max-w-4xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-                    Register Your Company
+                    Register New Meter
                 </h2>
 
                 <form onSubmit={submit}>
                     <div className="mb-6">
                         <InputLabel
                             htmlFor="department_id"
-                            value="department id"
+                            value="Department ID"
                         />
                         <TextInput
                             value={data.department_id}
@@ -50,7 +50,7 @@ export default function Register() {
                     <div className="mb-6">
                         <InputLabel
                             htmlFor="meter_name"
-                            value="meter name"
+                            value="Meter Name"
                         />
                         <TextInput
                             value={data.meter_name}
@@ -69,7 +69,7 @@ export default function Register() {
                     <div className="mb-6">
                         <InputLabel
                             htmlFor="serial_number"
-                            value="serial number"
+                            value="Serial Number"
                         />
                         <TextInput
                             value={data.serial_number}
