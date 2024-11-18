@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react';
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -11,38 +11,28 @@ export default function ModalUpdate({ isOpen, onClose, company, onUpdate }) {
     const companyCodeInput = useRef();
 
     const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
-        company_name: '',
-        company_code: '',
+        company_name: company?.company_name || '',
+        company_code: company?.company_code || '',
     });
 
-    // Populate form with existing company data when modal is opened
     useEffect(() => {
         if (company) {
-            setData('company_name', company.company_name);
-            setData('company_code', company.company_code);
+            setData({ company_name: company.company_name, company_code: company.company_code });
         }
     }, [company]);
 
     const updateCompany = (e) => {
         e.preventDefault();
-
-        // Use `put` method to update company data in the database
         put(route('companies.update', company.id), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                onUpdate(); // Optionally, update the parent state with the updated company
-                onClose(); // Close the modal after successful update
+                onUpdate();
+                onClose();
             },
             onError: (errors) => {
-                // Handle form validation errors
-                if (errors.company_name) {
-                    companyNameInput.current.focus();
-                }
-
-                if (errors.company_code) {
-                    companyCodeInput.current.focus();
-                }
+                if (errors.company_name) companyNameInput.current.focus();
+                if (errors.company_code) companyCodeInput.current.focus();
             },
         });
     };

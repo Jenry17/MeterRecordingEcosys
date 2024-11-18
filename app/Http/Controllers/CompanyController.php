@@ -58,10 +58,7 @@ class CompanyController extends Controller
         return Inertia::render('Modules/Company/ShowUpdateDelete', [
             'companies' => $company
         ]);
-        // $company = Company::select('id', 'company_name', 'company_code')->get();
-        // return Inertia::render('Modules/Company/ShowUpdateDelete', [
-        //     'companies' => $company,
-        // ]);
+
     }
 
     /**
@@ -83,8 +80,8 @@ class CompanyController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Company $company)
+    public function destroy(Request $request)
     {
-        dd($company);
+        return $request;
     }
 }
