@@ -1,14 +1,17 @@
+
+
+
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 
-export default function Dashboard({ companies }) {
-    console.log(companies);
+export default function Dashboard({ meter }) {
+    console.log(meter);
 
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-2xl font-semibold leading-tight text-gray-800">
-                    Companies Dashboard
+                    Meter Dashboard
                 </h2>
             }
         >
@@ -20,41 +23,47 @@ export default function Dashboard({ companies }) {
                     href={route("meter.create")}
                     className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-3 shadow-md transition-all"
                 >
-                    Register New Company
+                    Register New Meter
                 </a>
             </div>
 
-            {/* <div className="relative overflow-x-auto bg-white shadow-lg rounded-lg">
+            <div className="relative overflow-x-auto bg-white shadow-lg rounded-lg">
                 <table className="w-full text-sm text-left text-gray-500 border-separate border-spacing-0.5">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
-                                Company Name
+                                Department ID
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Company Code
+                                Meter Name
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Actions
+                                Serial Number
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Action
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {companies.data.length > 0 ? (
-                            companies.data.map((items) => (
+                        {meter.data.length > 0 ? (
+                            meter.data.map((items) => (
                                 <tr
                                     key={items.id}
                                     className="bg-white border-b hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
                                 >
                                     <td className="px-6 py-4">
-                                        {items.company_name}
+                                        {items.department_id}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {items.company_code}
+                                        {items.meter_name}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {items.serial_number}
                                     </td>
                                     <td className="px-6 py-4 flex justify-center space-x-2">
                                         <Link
-                                            href={`/company/${items.id}`}
+                                            href={`/meter/${items.id}`}
                                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-link"
                                         >
                                             Show Details
@@ -78,33 +87,33 @@ export default function Dashboard({ companies }) {
 
             <div className="flex justify-center py-6 space-x-2">
                 <Link
-                    href={companies.prev_page_url || "#"}
+                    href={meter.prev_page_url || "#"}
                     className={`px-4 py-2 text-sm font-medium rounded-lg border ${
-                        !companies.prev_page_url
+                        !meter.prev_page_url
                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                             : "bg-blue-600 text-white hover:bg-blue-700"
                     } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
-                    disabled={!companies.prev_page_url}
+                    disabled={!meter.prev_page_url}
                 >
                     Previous
                 </Link>
 
                 <span className="px-4 py-2 text-sm font-medium text-gray-700">
-                    Page {companies.current_page} of {companies.last_page}
+                    Page {meter.current_page} of {meter.last_page}
                 </span>
 
                 <Link
-                    href={companies.next_page_url || "#"}
+                    href={meter.next_page_url || "#"}
                     className={`px-4 py-2 text-sm font-medium rounded-lg border ${
-                        !companies.next_page_url
+                        !meter.next_page_url
                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                             : "bg-blue-600 text-white hover:bg-blue-700"
                     } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
-                    disabled={!companies.next_page_url}
+                    disabled={!meter.next_page_url}
                 >
                     Next
                 </Link>
-            </div> */}
+            </div>
         </AuthenticatedLayout>
     );
 }
