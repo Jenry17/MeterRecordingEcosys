@@ -16,8 +16,9 @@ class MeterController extends Controller
      */
     public function index()
     {
+        $meterData = Meter::select('department_id', 'meter_name', 'serial_number')->paginate(5);
         return Inertia::render('Meters', [
-            'companies' => '1213',
+            'meter' => $meterData,
         ]);
     }
 
@@ -50,9 +51,19 @@ class MeterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Meter $meter)
+    public function show($id)
     {
-        //
+        /// Fetch the post from the database by its ID
+        $meter = Meter::findOrFail($id);
+
+        // Return the post data to the Inertia page
+        return Inertia::render('Modules/Meters/ShowUpdateDelete', [
+            'meter' => $meter
+        ]);
+        // $company = Company::select('id', 'company_name', 'company_code')->get();
+        // return Inertia::render('Modules/Company/ShowUpdateDelete', [
+        //     'companies' => $company,
+        // ]);
     }
 
     /**
