@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Meter;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateMeterRequest;
 
@@ -26,7 +27,13 @@ class MeterController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Modules/Meters/MeterCreate');
+        $companyData = Company::select('id', 'company_name', 'company_code')->paginate(5);
+        return Inertia::render('Modules/Meters/MeterCreate', [
+            'companies' => $companyData,
+        ]);
+        
+        
+        // return Inertia::render('Modules/Meters/MeterCreate');
     }
 
     /**
@@ -37,9 +44,9 @@ class MeterController extends Controller
         sleep(2);
 
         $fields = $request->validate([
-            'department_id' => ['required'],
-            'meter_name' => ['required'],
-            'serial_number' => ['required']
+            'department_id' => 'required|integer|max:255',
+            'meter_name' => 'required|string|max:255',
+            'serial_number' => 'required|integer|max:255',
         ]);
 
         Meter::create($fields);
@@ -76,16 +83,27 @@ class MeterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMeterRequest $request, Meter $meter)
+    public function update(Request $request, $id)
     {
-        //
+        $data = meter::findOrFail($id);
+        $validated = $request->validate([
+            'department_id' => 'required|integer|max:255',
+            'meter_name' => 'required|string|max:255',
+            'serial_number' => 'required|integer|max:255',
+            
+        ]);
+        $data->update($validated);
+
+        return redirect('/meter');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Meter $meter)
+    public function destroy($id)
     {
-        //
+        $data = meter::findOrFail($id);
+        $data->delete();
+        return redirect('/meter');
     }
 }
