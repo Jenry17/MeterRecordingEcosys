@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Department;
-use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
+use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
@@ -25,16 +25,15 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        //
         return Inertia::render('Modules/Department/Create', [
-            // 'companies' => '1213',
+            //
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreDepartmentRequest $request)
+    public function store(Request $request)
     {
         //
     }

@@ -40,8 +40,7 @@ export default function Dashboard({ companies }) {
             console.error('No company selected for deletion');
             return;
         }
-    
-        // Send the DELETE request to the correct route
+        
         destroy(route("company.destroy", selectedCompany.id), {
             preserveScroll: true,
             onSuccess: closeDeleteModal,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCompanyRequest;
 use Inertia\Inertia;
 use App\Models\Company;
 use Illuminate\Http\Request;
