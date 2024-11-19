@@ -72,16 +72,27 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCompanyRequest $request, Company $company)
+    public function update(Request $request, $id)
     {
-        //
+        // dd($request);
+        $data = Company::findOrFail($id);
+        $validated = $request->validate([
+            'company_name' => 'required|string|max:255',
+            'company_code' => 'required|string|max:255',
+        ]);
+        $data->update($validated);
+
+        return redirect('/company');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        return $request;
+        $data = Company::findOrFail($id);
+        $data->delete();
+
+        return redirect('/company');
     }
 }

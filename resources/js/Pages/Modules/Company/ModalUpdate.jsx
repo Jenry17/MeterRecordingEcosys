@@ -23,7 +23,7 @@ export default function ModalUpdate({ isOpen, onClose, company, onUpdate }) {
 
     const updateCompany = (e) => {
         e.preventDefault();
-        put(route('companies.update', company.id), {
+        put(route('company.update', company.id), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();

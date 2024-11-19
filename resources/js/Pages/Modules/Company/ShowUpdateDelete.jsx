@@ -33,12 +33,22 @@ export default function Dashboard({ companies }) {
         reset();
     };
 
-    const deleteCompany = () => {
+    const deleteCompany = (e) => {
+        e.preventDefault();
+    
+        if (!selectedCompany || !selectedCompany.id) {
+            console.error('No company selected for deletion');
+            return;
+        }
+    
+        // Send the DELETE request to the correct route
         destroy(route("company.destroy", selectedCompany.id), {
             preserveScroll: true,
             onSuccess: closeDeleteModal,
         });
     };
+    
+    
 
     const handleModalClose = () => {
         setIsModalOpen(false);
@@ -55,7 +65,9 @@ export default function Dashboard({ companies }) {
             <Head title="Company Details" />
 
             <div className="max-w-4xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Company Details</h2>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+                    Company Details
+                </h2>
 
                 <div className="mb-6">
                     <InputLabel htmlFor="company_name" value="Company Name" />
@@ -101,12 +113,18 @@ export default function Dashboard({ companies }) {
                         Are you sure you want to delete this company?
                     </h2>
                     <p className="mt-1 text-sm text-gray-600">
-                        Once the company is deleted, all of its resources and data will be permanently removed.
+                        Once the company is deleted, all of its resources and
+                        data will be permanently removed.
                     </p>
 
                     <div className="mt-6 flex justify-end space-x-4">
-                        <SecondaryButton onClick={closeDeleteModal}>No, Cancel</SecondaryButton>
-                        <DangerButton onClick={deleteCompany} disabled={processing}>
+                        <SecondaryButton onClick={closeDeleteModal}>
+                            No, Cancel
+                        </SecondaryButton>
+                        <DangerButton
+                            onClick={deleteCompany}
+                            disabled={processing}
+                        >
                             Yes, Delete Company
                         </DangerButton>
                     </div>
