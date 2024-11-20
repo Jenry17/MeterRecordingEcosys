@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Meter;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Http\Requests\UpdateMeterRequest;
 
 
@@ -39,20 +40,46 @@ class MeterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        sleep(2);
 
-        $fields = $request->validate([
-            'department_id' => 'required|integer|max:255',
-            'meter_name' => 'required|string|max:255',
-            'serial_number' => 'required|integer|max:255',
-        ]);
+     public function store(Request $request)
+{
+    sleep(2);
 
-        Meter::create($fields);
+    $fields = $request->validate([
+        'department_id' => 'required|string|max:255',
+        'meter_name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('meters', 'meter_name'), 
+        ],
+        'serial_number' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('meters', 'serial_number'), 
+        ],
+    ]);
 
-        return redirect('/meter');
-    }
+    Meter::create($fields);
+
+    return redirect('/meter');
+}
+
+
+    // public function store(Request $request)
+    // {
+    //     sleep(2);
+
+    //     $fields = $request->validate([
+    //         'department_id' => 'required|string|max:255',
+    //         'meter_name' => 'required|string|max:255',
+    //         'serial_number' => 'required|string|max:255',
+    //     ]);
+
+    //     Meter::create($fields);
+    //     return redirect('/meter');
+    // }
 
     /**
      * Display the specified resource.
@@ -60,7 +87,7 @@ class MeterController extends Controller
     public function show($id)
     {
         /// Fetch the post from the database by its ID
-        $meters = Meter::findOrFail($id);
+        $meters = meter::findOrFail($id);
 
         // Return the post data to the Inertia page
         return Inertia::render('Modules/Meters/ShowUpdateDelete', [
@@ -86,10 +113,10 @@ class MeterController extends Controller
     public function update(Request $request, $id)
     {
         $data = meter::findOrFail($id);
-        $validated = $request->validate([
-            'department_id' => 'required|integer|max:255',
+        $validated = $request->validate(rules: [
+            'department_id' => 'required|string|max:255',
             'meter_name' => 'required|string|max:255',
-            'serial_number' => 'required|integer|max:255',
+            'serial_number' => 'required|string|max:255',
             
         ]);
         $data->update($validated);
