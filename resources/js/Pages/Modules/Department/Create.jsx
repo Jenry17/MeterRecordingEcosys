@@ -1,86 +1,96 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import PrimaryButton from "@/Components/PrimaryButton";
+import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-export default function Dashboard({ companies }) {
-    console.log(companies);
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head, useForm } from "@inertiajs/react";
 
-    const{data, setData, post, processing, errors, reset } = useForm({
-        deparment_name:'',
-        department_code:'',
-        company_id:0
+export default function Register() {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        department_name: "",
+        department_code: "",
+        company_id: "",
     });
+
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('deparment.store'), {
-            // onFinish: () => reset('password'),
-        });
+        post(route("department.store"));
     };
-    1
+
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-2xl font-semibold leading-tight text-gray-800">
-                    Create Department
+        <AuthenticatedLayout>
+            <Head title="Register" />
+
+            <div className="max-w-4xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+                    Register Your Department
                 </h2>
-            }
-        >
-            <Head title="Dashboard" />
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            <form onSubmit={submit}>
-                                <div className="mt-4">
-                                    <InputLabel htmlFor="deparment_name" value="Department Name" />
-                                    <TextInput
-                                        id="department_name"
-                                        type="text"
-                                        name="department_name"
-                                        // value={data.password}
-                                        className="mt-1 block w-full"
-                                        autoComplete="current-password"
-                                    // onChange={(e) => setData('password', e.target.value)}
-                                    />
-                                </div>
-                                <div className="mt-4">
-                                    <InputLabel htmlFor="deparment_code" value="Department Code" />
-                                    <TextInput
-                                        id="department_name"
-                                        type="text"
-                                        name="department_name"
-                                        // value={data.password}
-                                        className="mt-1 block w-full"
-                                        autoComplete="current-password"
-                                    // onChange={(e) => setData('password', e.target.value)}
-                                    />
-                                </div>
-                                <div className="mt-4">
-                                    <InputLabel htmlFor="company_id" value="Company" />
-                                    <TextInput
-                                        id="company_id"
-                                        type="text"
-                                        name="company_id"
-                                        // value={data.password}
-                                        className="mt-1 block w-full"
-                                        autoComplete="current-password"
-                                    // onChange={(e) => setData('password', e.target.value)}
-                                    />
-                                </div>
-                                <div className="mt-4 flex items-center justify-end">
-                                <PrimaryButton className="ms-4" disabled={processing}>
-                                        Submit
-                                    </PrimaryButton>
-                                </div>
-                            </form>
-                        </div>
+
+                <form onSubmit={submit}>
+                    <div className="mb-6">
+                        <InputLabel
+                            htmlFor="department_name"
+                            value="Department Name"
+                        />
+                        <TextInput
+                            value={data.department_name}
+                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) =>
+                                setData("department_name", e.target.value)
+                            }
+                            required
+                        />
+                        <InputError
+                            message={errors.department_code}
+                            className="mt-2 text-sm text-red-600"
+                        />
                     </div>
-                </div>
+
+                    <div className="mb-6">
+                        <InputLabel
+                            htmlFor="department_code"
+                            value="Department Code"
+                        />
+                        <TextInput
+                            value={data.department_code}
+                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) =>
+                                setData("department_code", e.target.value)
+                            }
+                            required
+                        />
+                        <InputError
+                            message={errors.department_code}
+                            className="mt-2 text-sm text-red-600"
+                        />
+                    </div>
+
+                    <div className="mb-6">
+                        <InputLabel htmlFor="company_id" value="Company ID" />
+                        <TextInput
+                            value={data.company_id}
+                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) =>
+                                setData("company_id", e.target.value)
+                            }
+                            required
+                        />
+                        <InputError
+                            message={errors.company_id}
+                            className="mt-2 text-sm text-red-600"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-end mt-6">
+                        <PrimaryButton
+                            className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            disabled={processing}
+                        >
+                            {processing ? "Registering..." : "Register"}
+                        </PrimaryButton>
+                    </div>
+                </form>
             </div>
-
-
         </AuthenticatedLayout>
     );
 }

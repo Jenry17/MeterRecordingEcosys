@@ -14,9 +14,8 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
         return Inertia::render('Department', [
-            'companies' => '1213',
+            'data' => 'datos',
         ]);
     }
 
@@ -35,7 +34,17 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        sleep(1);
+
+        $fields = $request->validate([
+            'department_name' => ['required'],
+            'department_code' => ['required'],
+            'company_id' => ['required']
+        ]);
+
+        Department::create($fields);
+        return redirect('/department');
+        // return redirect()->route('department.index', [ 'data' => $fields]);
     }
 
     /**
