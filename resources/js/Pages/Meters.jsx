@@ -51,7 +51,7 @@ export default function Dashboard({ meter }) {
                                         className="bg-white border-b hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
                                     >
                                         <td className="px-6 py-4">
-                                            {items.department_id}
+                                            {items.department_name}
                                         </td>
                                         <td className="px-6 py-4">
                                             {items.meter_name}
