@@ -23,7 +23,7 @@ class MeterController extends Controller
         'meters.department_id',
         'meters.meter_name',
         'meters.serial_number',
-        'companies.id as company_name' // Assuming `name` is a column in `companies`
+        'companies.company_name as department_name' // Assuming `name` is a column in `companies`
     )
     ->join('companies', 'companies.id', '=', 'meters.department_id') // Change to `meters.company_id` if needed
     ->paginate(5);
