@@ -60,29 +60,26 @@ class MeterController extends Controller
      */
 
      public function store(Request $request)
-{
-    sleep(2);
-
-    $fields = $request->validate([
-        'department_id' => 'required|string|max:255',
-        'meter_name' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('meters', 'meter_name'), 
-        ],
-        'serial_number' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('meters', 'serial_number'), 
-        ],
-    ]);
-
-    Meter::create($fields);
-
-    return redirect('/meter');
-}
+     {
+         sleep(2);
+     
+         $request->validate([
+             'department_id' => 'required|string|max:255',
+             'meter_name' => 'required|string|max:255', // No unique rule for meter_name
+             'serial_number' => [
+                 'required',
+                 'string',
+                 'max:255',
+                 Rule::unique('meters', 'serial_number'), // Serial number must still be unique globally
+             ],
+         ]);
+     
+         // Create the new meter record
+         Meter::create($request->only(['department_id', 'meter_name', 'serial_number']));
+     
+         return redirect('/meter');
+     }
+     
 
 
     // public function store(Request $request)
