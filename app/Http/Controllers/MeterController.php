@@ -15,13 +15,31 @@ class MeterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $meterData = Meter::select( 'id', 'department_id', 'meter_name', 'serial_number')->paginate(5);
-        return Inertia::render('Meters', [
-            'meter' => $meterData,
-        ]);
-    }
+
+     public function index()
+{
+    $meterData = Meter::select(
+        'meters.id',
+        'meters.department_id',
+        'meters.meter_name',
+        'meters.serial_number',
+        'companies.id as company_name' // Assuming `name` is a column in `companies`
+    )
+    ->join('companies', 'companies.id', '=', 'meters.department_id') // Change to `meters.company_id` if needed
+    ->paginate(5);
+
+    return Inertia::render('Meters', [
+        'meter' => $meterData,
+    ]);
+}
+
+    // public function index()
+    // {
+    //     $meterData = Meter::select( 'id', 'department_id', 'meter_name', 'serial_number')->paginate(5);
+    //     return Inertia::render('Meters', [
+    //         'meter' => $meterData,
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.
