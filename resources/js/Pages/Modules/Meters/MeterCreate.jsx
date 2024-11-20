@@ -45,7 +45,7 @@ export default function Register({ companies }) {
                             {companies.data.map((items) => (
                                 <option
                                     key={items.id}
-                                    value={items.company_name}
+                                    value={items.id}
                                 >
                                     {items.company_name}
                                 </option>
