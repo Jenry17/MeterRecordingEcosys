@@ -5,7 +5,10 @@ import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
 
-export default function Register() {
+export default function Register({ department }) {
+
+    // console.log(department);
+    
     const { data, setData, post, processing, errors, reset } = useForm({
         department_name: "",
         department_code: "",
@@ -66,17 +69,30 @@ export default function Register() {
                     </div>
 
                     <div className="mb-6">
-                        <InputLabel htmlFor="company_id" value="Company ID" />
-                        <TextInput
+                        <InputLabel
+                            htmlFor="company_id"
+                            value="Company Name"
+                        />
+                        <select
                             value={data.company_id}
-                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             onChange={(e) =>
                                 setData("company_id", e.target.value)
                             }
+                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
-                        />
+                        >
+                            <option value="">Select a Company</option>
+                            {department.map((items) => (
+                                <option
+                                    key={items.id}
+                                    value={items.id}
+                                >
+                                    {items.company_name}
+                                </option>
+                            ))}
+                        </select>
                         <InputError
-                            message={errors.company_id}
+                            message={errors.company_name}
                             className="mt-2 text-sm text-red-600"
                         />
                     </div>

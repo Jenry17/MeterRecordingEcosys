@@ -7,6 +7,9 @@ import { Link } from "@inertiajs/react";
 import { Head, useForm } from "@inertiajs/react";
 
 export default function Register({ companies }) {
+
+    console.log(companies);
+
     const { data, setData, post, processing, errors } = useForm({
         department_id: "",
         meter_name: "",

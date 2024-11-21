@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Department;
 use App\Http\Requests\UpdateDepartmentRequest;
+use App\Models\Company;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -14,8 +15,18 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Department', [
-            'data' => 'datos',
+        $data = Department::select(
+            'departments.id',
+            'departments.department_name',
+            'departments.department_code',
+            'departments.company_id',
+            'companies.company_name as company_name' // Assuming `name` is a column in `companies`
+        )
+            ->join('companies', 'companies.id', '=', 'departments.company_id') // Change to `meters.company_id` if needed
+            ->paginate(5);
+
+        return Inertia::render('Department', props: [
+            'department' => $data,
         ]);
     }
 
@@ -24,8 +35,9 @@ class DepartmentController extends Controller
      */
     public function create()
     {
+        $data = Company::select('id', 'company_name')->get();
         return Inertia::render('Modules/Department/Create', [
-            //
+            'department' => $data,
         ]);
     }
 
@@ -50,22 +62,15 @@ class DepartmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Department $department)
+    public function show($id)
     {
-        //
-    }
+        $data = Department::findOrFail($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Department $department)
-    {
-        //
+        // Return the post data to the Inertia page
+        return Inertia::render('Modules/Department/ShowUpdateDelete', [
+            'department' => $data
+        ]);
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateDepartmentRequest $request, Department $department)
     {
         //
