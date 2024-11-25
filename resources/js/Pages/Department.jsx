@@ -3,8 +3,6 @@ import { Head, Link } from "@inertiajs/react";
 
 export default function Dashboard({ department }) {
     
-    console.log(department);
-
     return (
         <AuthenticatedLayout
             header={

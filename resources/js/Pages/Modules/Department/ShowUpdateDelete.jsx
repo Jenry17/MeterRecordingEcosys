@@ -8,22 +8,24 @@ import DangerButton from "@/Components/DangerButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { useForm } from "@inertiajs/react";
 
-export default function Dashboard({ department }) {
+export default function Dashboard({ departments }) {
+    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [selectedCompany, setSelectedCompany] = useState(null);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
 
     const { delete: destroy, processing, reset, clearErrors } = useForm();
 
     const handleBack = () => window.history.back();
 
-    const openUpdateModal = (company) => {
-        setSelectedCompany(company);
+    const openUpdateModal = (department) => {
+        setSelectedDepartment(department);
         setIsModalOpen(true);
     };
 
-    const openDeleteModal = (company) => {
-        setSelectedCompany(company);
+    const openDeleteModal = (department) => {
+        setSelectedDepartment(department);
         setIsDeleteModalOpen(true);
     };
 
@@ -36,12 +38,12 @@ export default function Dashboard({ department }) {
     const deleteCompany = (e) => {
         e.preventDefault();
 
-        if (!selectedCompany || !selectedCompany.id) {
+        if (!selectedDepartment || !selectedDepartment.id) {
             console.error("No company selected for deletion");
             return;
         }
 
-        destroy(route("company.destroy", selectedCompany.id), {
+        destroy(route("department.destroy", selectedDepartment.id), {
             preserveScroll: true,
             onSuccess: closeDeleteModal,
         });
@@ -49,34 +51,41 @@ export default function Dashboard({ department }) {
 
     const handleModalClose = () => {
         setIsModalOpen(false);
-        setSelectedCompany(null);
+        setSelectedDepartment(null);
     };
 
-    const handleCompanyUpdate = () => {
+    const handleDepartmentUpdate = () => {
         setIsModalOpen(false);
-        setSelectedCompany(null);
+        setSelectedDepartment(null);
     };
 
     return (
         <AuthenticatedLayout>
-            <Head title="Company Details" />
+            <Head title="Department Details" />
 
             <div className="max-w-4xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-                    Company Details
+                    Department Details
                 </h2>
 
                 <div className="mb-6">
-                    <InputLabel htmlFor="company_name" value="Company Name" />
+                    <InputLabel htmlFor="department_name" value="Department Name" />
                     <div className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
-                        {companies.company_name || "N/A"}
+                        {departments.department_name || "N/A"}
                     </div>
                 </div>
 
                 <div className="mb-6">
-                    <InputLabel htmlFor="company_code" value="Company Code" />
+                    <InputLabel htmlFor="department_code" value="Department Code" />
                     <div className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
-                        {companies.company_code || "N/A"}
+                        {departments.department_code || "N/A"}
+                    </div>
+                </div>
+
+                <div className="mb-6">
+                    <InputLabel htmlFor="company_id" value="Company Name" />
+                    <div className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
+                        {departments.company_name || "N/A"}
                     </div>
                 </div>
 
@@ -89,14 +98,14 @@ export default function Dashboard({ department }) {
                     </button>
 
                     <button
-                        onClick={() => openUpdateModal(department)}
+                        onClick={() => openUpdateModal(departments)}
                         className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
                     >
                         Update
                     </button>
 
                     <button
-                        onClick={() => openDeleteModal(department)}
+                        onClick={() => openDeleteModal(departments)}
                         className="w-full sm:w-auto px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700"
                     >
                         Delete
@@ -131,8 +140,8 @@ export default function Dashboard({ department }) {
             <ModalUpdate
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
-                company={department}
-                onUpdate={handleCompanyUpdate}
+                department={departments}
+                onUpdate={handleDepartmentUpdate}
             />
         </AuthenticatedLayout>
     );

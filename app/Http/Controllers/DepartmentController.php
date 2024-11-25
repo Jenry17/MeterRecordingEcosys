@@ -20,19 +20,15 @@ class DepartmentController extends Controller
             'departments.department_name',
             'departments.department_code',
             'departments.company_id',
-            'companies.company_name as company_name' // Assuming `name` is a column in `companies`
+            'companies.company_name as company_name'
         )
-            ->join('companies', 'companies.id', '=', 'departments.company_id') // Change to `meters.company_id` if needed
+            ->join('companies', 'companies.id', '=', 'departments.company_id')
             ->paginate(5);
 
         return Inertia::render('Department', props: [
             'department' => $data,
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $data = Company::select('id', 'company_name')->get();
@@ -40,10 +36,6 @@ class DepartmentController extends Controller
             'department' => $data,
         ]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         sleep(1);
@@ -56,29 +48,30 @@ class DepartmentController extends Controller
 
         Department::create($fields);
         return redirect('/department');
-        // return redirect()->route('department.index', [ 'data' => $fields]);
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $data = Department::findOrFail($id);
 
-        // Return the post data to the Inertia page
+        $data = Department::join('companies', 'companies.id', '=', 'departments.company_id')
+        ->where('departments.id', $id)
+        ->select(
+            'departments.id',
+            'departments.department_name',
+            'departments.department_code',
+            'departments.company_id',
+            'companies.company_name as company_name'
+        )
+        ->firstOrFail($id);
+
+
         return Inertia::render('Modules/Department/ShowUpdateDelete', [
-            'department' => $data
+            'departments' => $data
         ]);
     }
     public function update(UpdateDepartmentRequest $request, Department $department)
     {
         //
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Department $department)
     {
         //
