@@ -8,7 +8,7 @@ import DangerButton from "@/Components/DangerButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { useForm } from "@inertiajs/react";
 
-export default function Dashboard({ departments }) {
+export default function Dashboard({ departments, company }) {
     
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -141,6 +141,7 @@ export default function Dashboard({ departments }) {
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
                 department={departments}
+                companies = {company}
                 onUpdate={handleDepartmentUpdate}
             />
         </AuthenticatedLayout>

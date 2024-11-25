@@ -6,8 +6,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
 
 export default function Register({ department }) {
-    
-    console.log(department);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         department_name: "",

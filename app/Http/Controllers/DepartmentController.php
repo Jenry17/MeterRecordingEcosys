@@ -52,6 +52,8 @@ class DepartmentController extends Controller
     public function show($id)
     {
 
+        $companies  = Company::select('id', 'company_name', 'company_code')->get();
+
         $data = Department::join('companies', 'companies.id', '=', 'departments.company_id')
         ->where('departments.id', $id)
         ->select(
@@ -65,15 +67,27 @@ class DepartmentController extends Controller
 
 
         return Inertia::render('Modules/Department/ShowUpdateDelete', [
-            'departments' => $data
+            'departments' => $data,
+            'company' => $companies,
         ]);
     }
-    public function update(UpdateDepartmentRequest $request, Department $department)
+    public function update(Request $request,$id)
     {
-        //
+        $data = Department::findOrFail($id);
+        $validated = $request->validate(rules: [
+            'department_name' => 'required|string|max:255',
+            'department_code' => 'required|string|max:255',
+            'company_id' => 'required|string|max:255',
+
+        ]);
+        $data->update($validated);
+
+        return redirect('/department');
     }
-    public function destroy(Department $department)
+    public function destroy($id)
     {
-        //
+        $data = Department::findOrFail($id);
+        $data->delete();
+        return redirect('/department');
     }
 }

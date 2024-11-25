@@ -6,7 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
 
-export default function ModalUpdate({ isOpen, onClose, department, onUpdate }) {
+export default function ModalUpdate({ isOpen, onClose, department, companies, onUpdate }) {
     const departmentNameInput = useRef();
     const departmentCodeInput = useRef();
 
@@ -36,13 +36,11 @@ export default function ModalUpdate({ isOpen, onClose, department, onUpdate }) {
         }
     }, [department]);
 
-    console.log(data);
-
     const updateDepartment = (e) => {
         e.preventDefault();
-        put(route("departme.update", department.id), {
+        put(route("department.update", department.id), {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: () => {  
                 reset();
                 onUpdate();
                 onClose();
@@ -114,11 +112,11 @@ export default function ModalUpdate({ isOpen, onClose, department, onUpdate }) {
                             required
                         >
                             <option value="">Select a Company</option>
-                            {/* {data.map((items) => (
+                            {companies.map((items) => (
                                 <option key={items.id} value={items.id}>
                                     {items.company_name}
                                 </option>
-                            ))} */}
+                            ))}
                         </select>
                         <InputError
                             message={errors.company_name}
