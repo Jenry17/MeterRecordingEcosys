@@ -3,8 +3,9 @@ import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function Dashboard({ meter }) {
-    console.log (meter);
+    console.log(meter);
     const [searchQuery, setSearchQuery] = useState(""); // State for search query
+    const [allData, setAllData] = useState(meter.data); // State to hold all data from the controller
     const [filteredData, setFilteredData] = useState(meter.data); // State for filtered data
 
     // Handle search
@@ -12,8 +13,8 @@ export default function Dashboard({ meter }) {
         const query = event.target.value.toLowerCase();
         setSearchQuery(query);
 
-        // Filter the meter data
-        const filtered = meter.data.filter(
+        // Filter all data from the controller
+        const filtered = allData.filter(
             (item) =>
                 item.department_name.toLowerCase().includes(query) ||
                 item.meter_name.toLowerCase().includes(query) ||
@@ -73,23 +74,23 @@ export default function Dashboard({ meter }) {
                         </thead>
                         <tbody>
                             {filteredData.length > 0 ? (
-                                filteredData.map((items) => (
+                                filteredData.map((item) => (
                                     <tr
-                                        key={items.id}
+                                        key={item.id}
                                         className="bg-white border-b hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
                                     >
                                         <td className="px-6 py-4">
-                                            {items.department_name}
+                                            {item.department_name}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {items.meter_name}
+                                            {item.meter_name}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {items.serial_number}
+                                            {item.serial_number}
                                         </td>
                                         <td className="px-6 py-4 flex justify-center space-x-2">
                                             <Link
-                                                href={`/meter/${items.id}`}
+                                                href={`/meter/${item.id}`}
                                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-link"
                                             >
                                                 Show Details
@@ -144,4 +145,3 @@ export default function Dashboard({ meter }) {
         </AuthenticatedLayout>
     );
 }
-

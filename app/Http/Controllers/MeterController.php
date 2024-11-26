@@ -16,31 +16,75 @@ class MeterController extends Controller
     /**
      * Display a listing of the resource.
      */
+    
+     public function index(Request $request)
+     {
+         // Extract search query from the request
+         $search = $request->input('search', ''); // Default to empty string if not provided
+     
+         // Query the Meter model with the necessary join and selection
+         $query = Meter::select(
+                 'meters.id',
+                 'meters.department_id',
+                 'meters.meter_name',
+                 'meters.serial_number',
+                 'companies.company_name as department_name' // Assuming `company_name` is the correct column
+             )
+             ->join('companies', 'companies.id', '=', 'meters.department_id'); // Change to `meters.company_id` if applicable
+     
+         // Apply search filtering across all data
+         if (!empty($search)) {
+             $query->where(function ($subQuery) use ($search) {
+                 $subQuery->where('meters.meter_name', 'like', '%' . $search . '%')
+                     ->orWhere('meters.serial_number', 'like', '%' . $search . '%')
+                     ->orWhere('companies.company_name', 'like', '%' . $search . '%'); // Adjust field names as necessary
+             });
+         }
+     
+         // Paginate the results with a default limit of 5 per page
+         $meterData = $query->paginate(5)->appends(['search' => $search]); // Add `search` to pagination links
+     
+         // Render the paginated data with Inertia
+         return Inertia::render('Meters', [
+             'meter' => $meterData,
+             'filters' => [
+                 'search' => $search, // Pass search query back to the frontend for display
+             ],
+         ]);
+     }
+     
 
-    public function index(Request $request)
-    {
-        // Extract search query and page number from the request
-        $search = $request->input('search', ''); // Default to empty string if not provided
-        $page = $request->input('page', 1); // Default to 1 if not provided
+//     public function index(Request $request)
+//     {
+//         // Extract search query and page number from the request
+// $search = $request->input('search', ''); // Default to empty string if not provided
+// $page = $request->input('page', 1); // Default to 1 if not provided
 
-        // Query the ItemType model
-        $query = meter::query();
+// // Query the Meter model with the necessary join and selection
+// $query = Meter::select(
+//         'meters.id',
+//         'meters.department_id',
+//         'meters.meter_name',
+//         'meters.serial_number',
+//         'companies.company_name as department_name' // Assuming `company_name` is the correct column
+//     )
+//     ->join('companies', 'companies.id', '=', 'meters.department_id'); // Change to `meters.company_id` if applicable
 
-        // Apply search filtering if a search query is provided
-        if (!empty($search)) {
-            $query->where('meter_name', 'like', '%' . $search . '%');
-        }
+// // Apply search filtering if a search query is provided
+// if (!empty($search)) {
+//     $query->where('meters.meter_name', 'like', '%' . $search . '%');
+// }
 
-        // Paginate the results using the default limit
-        $itemTypes = $query->paginate(null, ['id', 'meter_name', 'serial_number',], 'page', $page);
+// // Paginate the results with a default limit of 5 per page
+// $meterData = $query->paginate(2, ['*'], 'page', $page);
 
-        // Return paginated results as JSON using the resource
-// return DepartmentResource::collection($itemTypes);
-        return Inertia::render('Meters', [
-            'meter' => $itemTypes,
-        ]);
+// // Render the paginated data with Inertia
+// return Inertia::render('Meters', [
+//     'meter' => $meterData,
+// ]);
 
-    }
+
+//     }
 
     // public function index()
     // {
