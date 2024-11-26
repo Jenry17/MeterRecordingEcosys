@@ -1,8 +1,10 @@
+import { useEffect, useRef } from "react";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Link } from "@inertiajs/react";
 import { Head, useForm } from "@inertiajs/react";
 
 export default function Register() {
@@ -11,10 +13,26 @@ export default function Register() {
         company_code: "",
     });
 
+    const backButtonRef = useRef(null);
+
     const submit = (e) => {
         e.preventDefault();
         post(route("company.store"));
     };
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+                backButtonRef.current?.click();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
 
     return (
         <AuthenticatedLayout>
@@ -65,7 +83,14 @@ export default function Register() {
                         />
                     </div>
 
-                    <div className="flex items-center justify-end mt-6">
+                    <div className="flex items-center justify-between mt-6">
+                        <Link
+                            ref={backButtonRef}
+                            href={route("company.index")}
+                            className="px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-md shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        >
+                            Back
+                        </Link>
                         <PrimaryButton
                             className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             disabled={processing}

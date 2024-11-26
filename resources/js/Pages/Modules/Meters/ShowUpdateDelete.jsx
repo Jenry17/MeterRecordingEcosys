@@ -1,12 +1,12 @@
 import { useState } from "react";
 import InputLabel from "@/Components/InputLabel";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import ModalUpdate from "./ModalUpdate";
 import Modal from "@/Components/Modal";
 import DangerButton from "@/Components/DangerButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-import { useForm } from "@inertiajs/react";
 
 export default function Dashboard({ meter }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,14 +33,14 @@ export default function Dashboard({ meter }) {
         reset();
     };
 
-    const deletemeter= (e) => {
+    const deletemeter = (e) => {
         e.preventDefault();
-    
+
         if (!selectedmeter || !selectedmeter.id) {
-            console.error('No company selected for deletion');
+            console.error("No company selected for deletion");
             return;
         }
-    
+
         // Send the DELETE request to the correct route
         destroy(route("meter.destroy", selectedmeter.id), {
             preserveScroll: true,
@@ -63,7 +63,9 @@ export default function Dashboard({ meter }) {
             <Head title="Meter Details" />
 
             <div className="max-w-4xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Meter Details</h2>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+                    Meter Details
+                </h2>
 
                 <div className="mb-6">
                     <InputLabel htmlFor="department_id" value="Department ID" />
@@ -87,12 +89,12 @@ export default function Dashboard({ meter }) {
                 </div>
 
                 <div className="flex items-center justify-between mt-6 space-x-4">
-                    <button
-                        onClick={handleBack}
-                        className="w-full sm:w-auto px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-md hover:bg-gray-400"
+                    <Link
+                        href={route("meter.index")}
+                        className="px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-md shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
                     >
                         Back
-                    </button>
+                    </Link>
 
                     <button
                         onClick={() => openUpdateModal(meter)}
@@ -116,12 +118,18 @@ export default function Dashboard({ meter }) {
                         Are you sure you want to delete this meter?
                     </h2>
                     <p className="mt-1 text-sm text-gray-600">
-                        Once the meters is deleted, all of its resources and data will be permanently removed.
+                        Once the meters is deleted, all of its resources and
+                        data will be permanently removed.
                     </p>
 
                     <div className="mt-6 flex justify-end space-x-4">
-                        <SecondaryButton onClick={closeDeleteModal}>No, Cancel</SecondaryButton>
-                        <DangerButton onClick={deletemeter} disabled={processing}>
+                        <SecondaryButton onClick={closeDeleteModal}>
+                            No, Cancel
+                        </SecondaryButton>
+                        <DangerButton
+                            onClick={deletemeter}
+                            disabled={processing}
+                        >
                             Yes, Delete Meter
                         </DangerButton>
                     </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Department;
 use App\Http\Requests\UpdateDepartmentRequest;
+use App\Models\Company;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -14,24 +15,27 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Department', [
-            'data' => 'datos',
+        $data = Department::select(
+            'departments.id',
+            'departments.department_name',
+            'departments.department_code',
+            'departments.company_id',
+            'companies.company_name as company_name'
+        )
+            ->join('companies', 'companies.id', '=', 'departments.company_id')
+            ->paginate(5);
+
+        return Inertia::render('Department', props: [
+            'department' => $data,
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
+        $data = Company::select('id', 'company_name')->get();
         return Inertia::render('Modules/Department/Create', [
-            //
+            'department' => $data,
         ]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         sleep(1);
@@ -44,38 +48,46 @@ class DepartmentController extends Controller
 
         Department::create($fields);
         return redirect('/department');
-        // return redirect()->route('department.index', [ 'data' => $fields]);
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Department $department)
+    public function show($id)
     {
-        //
+
+        $companies  = Company::select('id', 'company_name', 'company_code')->get();
+
+        $data = Department::join('companies', 'companies.id', '=', 'departments.company_id')
+        ->where('departments.id', $id)
+        ->select(
+            'departments.id',
+            'departments.department_name',
+            'departments.department_code',
+            'departments.company_id',
+            'companies.company_name as company_name'
+        )
+        ->firstOrFail($id);
+
+
+        return Inertia::render('Modules/Department/ShowUpdateDelete', [
+            'departments' => $data,
+            'company' => $companies,
+        ]);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Department $department)
+    public function update(Request $request,$id)
     {
-        //
+        $data = Department::findOrFail($id);
+        $validated = $request->validate(rules: [
+            'department_name' => 'required|string|max:255',
+            'department_code' => 'required|string|max:255',
+            'company_id' => 'required|string|max:255',
+
+        ]);
+        $data->update($validated);
+
+        return redirect('/department');
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateDepartmentRequest $request, Department $department)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Department $department)
-    {
-        //
+        $data = Department::findOrFail($id);
+        $data->delete();
+        return redirect('/department');
     }
 }
