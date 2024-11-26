@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DepartmentResource;
 use Inertia\Inertia;
 use App\Models\Meter;
 use App\Models\Company;
@@ -14,7 +15,7 @@ class MeterController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */
+     */   
 
     public function index()
     {
@@ -33,18 +34,7 @@ class MeterController extends Controller
         ]);
     }
 
-    // public function index()
-    // {
-    //     $meterData = Meter::select( 'id', 'department_id', 'meter_name', 'serial_number')->paginate(5);
-    //     return Inertia::render('Meters', [
-    //         'meter' => $meterData,
-    //     ]);
-    // }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+  public function create()
     {
         $companyData = Company::select('id', 'company_name', 'company_code')->paginate(5);
         return Inertia::render('Modules/Meters/MeterCreate', [
