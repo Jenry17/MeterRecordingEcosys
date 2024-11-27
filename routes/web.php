@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReadingsController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -30,5 +31,6 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth:sanctum'])->resource('/company', CompanyController::class);
 Route::middleware(['auth:sanctum'])->resource('/department', DepartmentController::class);
 Route::middleware(['auth:sanctum'])->resource('/meter', MeterController::class);
+Route::middleware(['auth:sanctum'])->resource('/reading', ReadingsController::class);
 
 require __DIR__.'/auth.php';

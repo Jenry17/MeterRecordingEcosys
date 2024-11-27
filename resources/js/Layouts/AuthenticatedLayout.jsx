@@ -51,7 +51,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Meter
                                 </NavLink>
 
-
+                                <NavLink
+                                    href={route('reading.index')}
+                                    active={route().current('reading.index')}
+                                >
+                                    Reading
+                                </NavLink>
                             </div>
                         </div>
 
