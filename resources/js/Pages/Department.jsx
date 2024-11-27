@@ -1,27 +1,44 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
+import { useState } from "react";
 
-export default function Dashboard({ department }) {
-    
+export default function Dashboard({ department, search }) {
+    const [searchTerm, setSearchTerm] = useState(search || "");
+
+    const handleSearchChange = (e) => {
+        const newSearchTerm = e.target.value;
+        setSearchTerm(newSearchTerm);
+
+        window.location.href = `/department?search=${newSearchTerm}`;
+    };
+
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-                    Meter Dashboard
+                    Department Dashboard
                 </h2>
             }
         >
             <Head title="Dashboard" />
 
             <div className="max-w-4xl mx-auto mt-6 p-8 bg-white shadow-lg rounded-lg">
-                <div className="mb-6">
+                <div className="mb-6 flex justify-between items-center">
                     <Link
                         type="button"
                         href={route("department.create")}
                         className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-3 shadow-md transition-all"
                     >
-                        Register New Meter
+                        Register New Department
                     </Link>
+
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Search by Department or Company"
+                        className="px-4 py-2 text-sm border border-gray-300 rounded-lg"
+                    />
                 </div>
 
                 <div className="relative overflow-x-auto bg-white shadow-lg rounded-lg">
@@ -71,10 +88,10 @@ export default function Dashboard({ department }) {
                             ) : (
                                 <tr>
                                     <td
-                                        colSpan="3"
+                                        colSpan="4"
                                         className="text-center px-6 py-4 text-gray-500"
                                     >
-                                        No meter available.
+                                        No records found.
                                     </td>
                                 </tr>
                             )}

@@ -13,6 +13,7 @@ class Meter extends Model
         'department_id',
         'meter_name',
         'serial_number',
+        'max_digit',
     ];
 
 }
