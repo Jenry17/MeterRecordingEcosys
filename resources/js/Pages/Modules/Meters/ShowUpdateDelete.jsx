@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, useForm } from "@inertiajs/react";
+    // import { Head, useForm } from "@inertiajs/react";
 import ModalUpdate from "./ModalUpdate";
 import Modal from "@/Components/Modal";
 import DangerButton from "@/Components/DangerButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-
+// import { Link } from "@inertiajs/react";
 
 export default function Dashboard({ meter }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -98,6 +98,13 @@ export default function Dashboard({ meter }) {
 
                 <div className="mb-6">
                     <InputLabel htmlFor="meter_name" value="Meter Name" />
+                    <div className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
+                        {meter.meter_name || "N/A"}
+                    </div>
+                </div>
+
+                <div className="mb-6">
+                    <InputLabel htmlFor="max_digit" value="Max Digit" />
                     <div className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
                         {meter.meter_name || "N/A"}
                     </div>
