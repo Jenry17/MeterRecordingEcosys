@@ -47,9 +47,9 @@ class MeterController extends Controller
 
     public function create()
     {
-        $companyData = Company::select('id', 'company_name', 'company_code')->paginate(5);
+        $companyData = Department::select('id', 'department_name')->get();
         return Inertia::render('Modules/Meters/MeterCreate', [
-            'companies' => $companyData,
+            'meter' => $companyData,
         ]);
 
 
@@ -60,52 +60,47 @@ class MeterController extends Controller
      * Store a newly created resource in storage.
      */
 
-    public function store(Request $request)
+     public function store(Request $request)
     {
         sleep(1);
 
-        $request->validate([
-            'department_id' => 'required|string|max:255',
-            'meter_name' => 'required|string|max:255', // No unique rule for meter_name
-            'serial_number' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('meters', 'serial_number'), // Serial number must still be unique globally
-            ],
-            'max_digit' => [
-                'required',
-                'int',
-                'max:5',
-                Rule::unique('meters', 'max_digit'),
-            ],
+        $fields = $request->validate(rules:[
+            'department_id' => ['required'],
+            'meter_name' => ['required'],
+            'serial_number' => ['required'],
+            'max_digit' => ['required'],
         ]);
 
-        // Create the new meter record
-        Meter::create($request->only(['department_id', 'meter_name', 'serial_number']));
-
+        Meter::create($fields);
         return redirect('/meter');
     }
 
-
-
     // public function store(Request $request)
     // {
-    //     sleep(2);
+    //     sleep(1);
 
-    //     $fields = $request->validate([
+    //     $request->validate([
     //         'department_id' => 'required|string|max:255',
-    //         'meter_name' => 'required|string|max:255',
-    //         'serial_number' => 'required|string|max:255',
+    //         'meter_name' => 'required|string|max:255', // No unique rule for meter_name
+    //         'serial_number' => [
+    //             'required',
+    //             'string',
+    //             'max:255',
+    //             Rule::unique('meters', 'serial_number'), // Serial number must still be unique globally
+    //         ],
+    //         'max_digit' => [
+    //             'required',
+    //             'int',
+    //             'max:99999',
+    //             Rule::unique('meters', 'max_digit'),
+    //         ],
     //     ]);
 
-    //     Meter::create($fields);
+    //     // Create the new meter record
+    //     Meter::create($request->only(['department_id', 'meter_name', 'serial_number', 'max_digit']));
+
     //     return redirect('/meter');
     // }
-
-    /**
-     * Display the specified resource.
-     */
 
      public function show($id)
      {

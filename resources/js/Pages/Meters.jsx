@@ -35,15 +35,7 @@ export default function Dashboard({ meter }) {
 
             <div className="max-w-4xl mx-auto mt-6 p-8 bg-white shadow-lg rounded-lg">
                 <div className="mb-6 flex justify-between items-center">
-                    {/* Search Box */}
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={handleSearch}
-                        placeholder="Search meters..."
-                        className="px-4 py-2 w-full max-w-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-
+                    
                     {/* Register New Meter Button */}
                     <Link
                         type="button"
@@ -52,6 +44,15 @@ export default function Dashboard({ meter }) {
                     >
                         Register New Meter
                     </Link>
+
+                    {/* Search Box */}
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={handleSearch}
+                        placeholder="Search meters..."
+                        className="px-4 py-2 w-full max-w-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
                 </div>
 
                 <div className="relative overflow-x-auto bg-white shadow-lg rounded-lg">
