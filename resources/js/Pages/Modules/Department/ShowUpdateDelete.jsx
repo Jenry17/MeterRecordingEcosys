@@ -30,7 +30,6 @@ export default function Dashboard({ departments, company }) {
         };
     }, []);
 
-    const handleBack = () => window.history.back();
 
     const openUpdateModal = (department) => {
         setSelectedDepartment(department);

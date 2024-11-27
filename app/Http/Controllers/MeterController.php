@@ -15,7 +15,7 @@ class MeterController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */   
+     */
 
     public function index()
     {
@@ -34,7 +34,7 @@ class MeterController extends Controller
         ]);
     }
 
-  public function create()
+    public function create()
     {
         $companyData = Company::select('id', 'company_name', 'company_code')->paginate(5);
         return Inertia::render('Modules/Meters/MeterCreate', [
@@ -51,7 +51,7 @@ class MeterController extends Controller
 
     public function store(Request $request)
     {
-        sleep(2);
+        sleep(1);
 
         $request->validate([
             'department_id' => 'required|string|max:255',
@@ -61,6 +61,12 @@ class MeterController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('meters', 'serial_number'), // Serial number must still be unique globally
+            ],
+            'max_digit' => [
+                'required',
+                'int',
+                'max:5',
+                Rule::unique('meters', 'max_digit'),
             ],
         ]);
 

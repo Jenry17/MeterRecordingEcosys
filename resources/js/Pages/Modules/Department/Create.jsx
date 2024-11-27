@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
-import InputError from "@/Components/InputError";
+import { useEffect, useRef, useState } from "react";
+import { Head, useForm, Link } from "@inertiajs/react";
+import InputError from "@/Components/InputError";   
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Link } from "@inertiajs/react";
-import { Head, useForm } from "@inertiajs/react";
 
 export default function Register({ department }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -15,6 +14,10 @@ export default function Register({ department }) {
     });
 
     const backButtonRef = useRef(null);
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredDepartments, setFilteredDepartments] = useState(department);
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
 
     const submit = (e) => {
         e.preventDefault();
@@ -34,6 +37,32 @@ export default function Register({ department }) {
             window.removeEventListener("keydown", handleKeyDown);
         };
     }, []);
+
+    useEffect(() => {
+        if (searchQuery === "") {
+            setFilteredDepartments(department);
+        } else {
+            setFilteredDepartments(
+                department.filter((item) =>
+                    item.company_name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+            );
+        }
+    }, [searchQuery, department]);
+
+    const handleSelectCompany = (companyId, companyName) => {
+        setData("company_id", companyId);
+        setSearchQuery(companyName);
+        setDropdownOpen(false);
+    };
+
+    const handleInputFocus = () => {
+        setDropdownOpen(true);
+    };
+
+    const handleInputBlur = () => {
+        setTimeout(() => setDropdownOpen(false), 200);
+    };
 
     return (
         <AuthenticatedLayout>
@@ -85,21 +114,51 @@ export default function Register({ department }) {
 
                     <div className="mb-6">
                         <InputLabel htmlFor="company_id" value="Company Name" />
-                        <select
-                            value={data.company_id}
-                            onChange={(e) =>
-                                setData("company_id", e.target.value)
-                            }
-                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        >
-                            <option value="">Select a Company</option>
-                            {department.map((items) => (
-                                <option key={items.id} value={items.id}>
-                                    {items.company_name}
-                                </option>
-                            ))}
-                        </select>
+
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onFocus={handleInputFocus}
+                                onBlur={handleInputBlur}
+                                placeholder="Search for a company"
+                                className="mt-2 block w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            
+                            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M19 9l-7 7-7-7"
+                                    />
+                                </svg>
+                            </span>
+
+
+                            {isDropdownOpen && filteredDepartments.length > 0 && (
+                                <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                                    {filteredDepartments.map((item) => (
+                                        <li
+                                            key={item.id}
+                                            onClick={() => handleSelectCompany(item.id, item.company_name)}
+                                            className="cursor-pointer px-4 py-2 hover:bg-gray-200"
+                                        >
+                                            {item.company_name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+
                         <InputError
                             message={errors.company_name}
                             className="mt-2 text-sm text-red-600"

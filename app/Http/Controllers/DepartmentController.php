@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Department;
-use App\Http\Requests\UpdateDepartmentRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
 
@@ -13,8 +12,10 @@ class DepartmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->get('search', '');
+
         $data = Department::select(
             'departments.id',
             'departments.department_name',
@@ -23,11 +24,13 @@ class DepartmentController extends Controller
             'companies.company_name as company_name'
         )
             ->join('companies', 'companies.id', '=', 'departments.company_id')
-            ->paginate(5);
+            ->when($search, function ($query) use ($search) {
+                $query->where('departments.department_name', 'like', "%$search%")
+                    ->orWhere('companies.company_name', 'like', "%$search%");
+            })
+            ->paginate(2);
 
-        return Inertia::render('Department', props: [
-            'department' => $data,
-        ]);
+        return Inertia::render('Department', ['department' => $data, 'search' => $search]);
     }
     public function create()
     {
@@ -52,18 +55,18 @@ class DepartmentController extends Controller
     public function show($id)
     {
 
-        $companies  = Company::select('id', 'company_name', 'company_code')->get();
+        $companies  = Company::select('id', 'company_name')->get();
 
         $data = Department::join('companies', 'companies.id', '=', 'departments.company_id')
-        ->where('departments.id', $id)
-        ->select(
-            'departments.id',
-            'departments.department_name',
-            'departments.department_code',
-            'departments.company_id',
-            'companies.company_name as company_name'
-        )
-        ->firstOrFail($id);
+            ->where('departments.id', $id)
+            ->select(
+                'departments.id',
+                'departments.department_name',
+                'departments.department_code',
+                'departments.company_id',
+                'companies.company_name as company_name'
+            )
+            ->firstOrFail($id);
 
 
         return Inertia::render('Modules/Department/ShowUpdateDelete', [
@@ -71,7 +74,7 @@ class DepartmentController extends Controller
             'company' => $companies,
         ]);
     }
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $data = Department::findOrFail($id);
         $validated = $request->validate(rules: [

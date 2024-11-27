@@ -3,22 +3,32 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Link } from "@inertiajs/react";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, Link } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function Register({ companies }) {
-
-    console.log(companies);
-
     const { data, setData, post, processing, errors } = useForm({
         department_id: "",
         meter_name: "",
         serial_number: "",
     });
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+    const filteredCompanies = companies.data.filter((company) =>
+        company.company_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const submit = (e) => {
         e.preventDefault();
         post(route("meter.store"));
+    };
+
+    const handleSelect = (selectedCompany) => {
+        setData("department_id", selectedCompany.id);
+        setSearchTerm(selectedCompany.company_name); 
+        setIsDropdownVisible(false); 
     };
 
     return (
@@ -36,26 +46,60 @@ export default function Register({ companies }) {
                             htmlFor="department_id"
                             value="Department"
                         />
-                        <select
-                            value={data.department_id}
-                            onChange={(e) =>
-                                setData("department_id", e.target.value)
-                            }
-                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        >
-                            <option value="">Select a department</option>
-                            {companies.data.map((items) => (
-                                <option
-                                    key={items.id}
-                                    value={items.id}
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Select or type a department"
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    setIsDropdownVisible(true);
+                                }}
+                                onClick={() => setIsDropdownVisible(true)}
+                                onBlur={() => setTimeout(() => setIsDropdownVisible(false), 200)}
+                                className="mt-2 block w-full px-4 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+
+                            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
                                 >
-                                    {items.company_name}
-                                </option>
-                            ))}
-                        </select>
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M19 9l-7 7-7-7"
+                                    />
+                                </svg>
+                            </span>
+
+                            {isDropdownVisible && filteredCompanies.length > 0 && (
+                                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto">
+                                    {filteredCompanies.map((item) => (
+                                        <li
+                                            key={item.id}
+                                            onClick={() => handleSelect(item)}
+                                            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                        >
+                                            {item.company_name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                            {isDropdownVisible && filteredCompanies.length === 0 && (
+                                <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg">
+                                    <div className="px-4 py-2 text-gray-500">
+                                        No results found
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <InputError
-                            message={errors.company_name}
+                            message={errors.department_id}
                             className="mt-2 text-sm text-red-600"
                         />
                     </div>
@@ -99,15 +143,13 @@ export default function Register({ companies }) {
                     </div>
 
                     <div className="flex items-center justify-between mt-6">
-                        {/* Back Button */}
                         <Link
-                            href={route("meter.index")} 
+                            href={route("meter.index")}
                             className="px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-md shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
                         >
                             Back
                         </Link>
 
-                        {/* Submit Button */}
                         <PrimaryButton
                             className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             disabled={processing}
