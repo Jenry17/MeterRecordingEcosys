@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\DepartmentResource;
 use Inertia\Inertia;
 use App\Models\Meter;
+use App\Models\Department;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,22 +18,32 @@ class MeterController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index()
-    {
-        $meterData = Meter::select(
-            'meters.id',
-            'meters.department_id',
-            'meters.meter_name',
-            'meters.serial_number',
-            'companies.company_name as department_name' // Assuming `name` is a column in `companies`
-        )
-            ->join('companies', 'companies.id', '=', 'meters.department_id') // Change to `meters.company_id` if needed
-            ->paginate(5);
+     public function index(Request $request)
+{
+    $searchTerm = $request->get('search'); // Get the search term from the request
 
-        return Inertia::render('Meters', [
-            'meter' => $meterData,
-        ]);
-    }
+    $meterData = Meter::select(
+        'meters.id',
+        'meters.department_id', 
+        'meters.meter_name',
+        'meters.serial_number',
+        'companies.company_name as department_name' // Assuming `name` is a column in `companies`
+    )
+    ->join('companies', 'companies.id', '=', 'meters.department_id') // Adjust if needed
+    ->when($searchTerm, function($query, $searchTerm) {
+        // Apply search filtering if a search term is provided
+        $query->where('meters.meter_name', 'like', '%' . $searchTerm . '%')
+              ->orWhere('meters.serial_number', 'like', '%' . $searchTerm . '%');
+    })
+    ->paginate(5);
+
+    return Inertia::render('Meters', [
+        'meter' => $meterData,
+        'search' => $searchTerm, // Pass the search term to the view if you want to display it in the UI
+    ]);
+}
+
+
 
     public function create()
     {
@@ -95,32 +106,58 @@ class MeterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        /// Fetch the post from the database by its ID
-        $meters = meter::findOrFail($id);
 
-        // Return the post data to the Inertia page
-        return Inertia::render('Modules/Meters/ShowUpdateDelete', [
-            'meter' => $meters
-        ]);
-        // $company = Company::select('id', 'company_name', 'company_code')->get();
-        // return Inertia::render('Modules/Company/ShowUpdateDelete', [
-        //     'companies' => $company,
-        // ]);
-    }
+     public function show($id)
+     {
+ 
+         $Departmentdata  = Department::select('id', 'department_name')->get();
+ 
+         $Meterdata = Meter ::join('departments', 'departments.id', '=', 'meters.department_id')
+         ->where('meters.id', $id)
+         ->select(
+             'meters.id',
+             'meters.department_id',
+             'meters.meter_name',
+             'meters.serial_number',
+             'departments.department_name as department_name' 
+         )
+         ->firstOrFail($id);
+ 
+ 
+         return Inertia::render('Modules/Meter/ShowUpdateDelete', [
+             'meter' => $Meterdata,
+             'department' => $Departmentdata,
+         ]);
+     }
+     
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Meter $meter)
-    {
-        //
-    }
+     
+    // public function show($id)
+    // {    
+    //     /// Fetch the post from the database by its ID
+    //     $meters = meter::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
+    //     // Return the post data to the Inertia page
+    //     return Inertia::render('Modules/Meters/ShowUpdateDelete', [
+    //         'meter' => $meters
+    //     ]);
+    //     // $company = Company::select('id', 'company_name', 'company_code')->get();
+    //     // return Inertia::render('Modules/Company/ShowUpdateDelete', [
+    //     //     'companies' => $company,
+    //     // ]);
+    // }
+
+    // /**
+    //  * Show the form for editing the specified resource.
+    //  */
+    // public function edit(Meter $meter)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
     public function update(Request $request, $id)
     {
         $data = meter::findOrFail($id);

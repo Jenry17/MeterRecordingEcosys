@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Link } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
-import { Link } from "@inertiajs/react";
 import ModalUpdate from "./ModalUpdate";
 import Modal from "@/Components/Modal";
 import DangerButton from "@/Components/DangerButton";
 import SecondaryButton from "@/Components/SecondaryButton";
+
 
 export default function Dashboard({ meter }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,6 +15,8 @@ export default function Dashboard({ meter }) {
     const [selectedmeter, setSelectedmeter] = useState(null);
 
     const { delete: destroy, processing, reset, clearErrors } = useForm();
+
+    const backButtonRef = useRef(null);
 
     const handleBack = () => window.history.back();
 
@@ -58,6 +61,25 @@ export default function Dashboard({ meter }) {
         setSelectedmeter(null);
     };
 
+    const handleCompanyUpdate = () => {
+        setIsModalOpen(false);
+        setSelectedCompany(null);
+    };
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+                backButtonRef.current?.click();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
     return (
         <AuthenticatedLayout>
             <Head title="Meter Details" />
@@ -90,6 +112,7 @@ export default function Dashboard({ meter }) {
 
                 <div className="flex items-center justify-between mt-6 space-x-4">
                     <Link
+                        ref={backButtonRef}
                         href={route("meter.index")}
                         className="px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-md shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
                     >
