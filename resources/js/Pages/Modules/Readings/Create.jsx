@@ -47,9 +47,7 @@ export default function Register({ reading }) {
         }
     }, [searchQuery, reading]);
 
-    // Validate the date format YYYY-MM-DD
     const validateDateFormat = (date) => {
-        // Regex to match YYYY-MM-DD format
         const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
         return regex.test(date);
     };
@@ -57,28 +55,22 @@ export default function Register({ reading }) {
     const handleDateChange = (e) => {
         let value = e.target.value;
 
-        // Remove any non-numeric characters except hyphens
         value = value.replace(/[^0-9\-]/g, "");
 
-        // Prevent consecutive hyphens (replace multiple hyphens with a single hyphen)
         value = value.replace(/-+/g, "-");
 
-        // If there are 5 or more characters and no hyphen after the year, insert it
         if (value.length > 4 && value.charAt(4) !== "-") {
             value = value.slice(0, 4) + "-" + value.slice(4);
         }
 
-        // If there are 8 or more characters and no hyphen after the month, insert it
         if (value.length > 7 && value.charAt(7) !== "-") {
             value = value.slice(0, 7) + "-" + value.slice(7);
         }
 
-        // Limit the input to exactly 10 characters: YYYY-MM-DD
         if (value.length > 10) {
-            value = value.slice(0, 10); // Allow a maximum of 10 characters (YYYY-MM-DD)
+            value = value.slice(0, 10);
         }
 
-        // Set the formatted value to the state
         setData("reading_date", value);
     };
 
@@ -99,13 +91,11 @@ export default function Register({ reading }) {
     const submit = (e) => {
         e.preventDefault();
 
-        // Validate the date before submitting the form
         if (!validateDateFormat(data.reading_date)) {
             alert("Please enter a valid date in YYYY-MM-DD format.");
             return;
         }
 
-        // Submit the form if validation passes
         post(route("reading.store"));
     
     };
