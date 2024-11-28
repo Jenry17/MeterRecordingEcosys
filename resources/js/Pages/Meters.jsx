@@ -2,25 +2,14 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Dashboard({ meter }) {
-    console.log(meter);
-    const [searchQuery, setSearchQuery] = useState(""); // State for search query
-    const [allData, setAllData] = useState(meter.data); // State to hold all data from the controller
-    const [filteredData, setFilteredData] = useState(meter.data); // State for filtered data
+export default function Dashboard({ meter, search }) {
+    const [searchTerm, setSearchTerm] = useState(search || "");
 
-    // Handle search
-    const handleSearch = (event) => {
-        const query = event.target.value.toLowerCase();
-        setSearchQuery(query);
+    const handleSearchChange = (e) => {
+        const newSearchTerm = e.target.value;
+        setSearchTerm(newSearchTerm);
 
-        // Filter all data from the controller
-        const filtered = allData.filter(
-            (item) =>
-                item.department_name.toLowerCase().includes(query) ||
-                item.meter_name.toLowerCase().includes(query) ||
-                item.serial_number.toLowerCase().includes(query)
-        );
-        setFilteredData(filtered);
+        window.location.href = `/meter?search=${newSearchTerm}`;
     };
 
     return (
@@ -35,23 +24,20 @@ export default function Dashboard({ meter }) {
 
             <div className="max-w-4xl mx-auto mt-6 p-8 bg-white shadow-lg rounded-lg">
                 <div className="mb-6 flex justify-between items-center">
-                    
-                    {/* Register New Meter Button */}
                     <Link
                         type="button"
                         href={route("meter.create")}
-                        className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-3 shadow-md transition-all ml-4"
+                        className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-3 shadow-md transition-all"
                     >
                         Register New Meter
                     </Link>
 
-                    {/* Search Box */}
                     <input
                         type="text"
-                        value={searchQuery}
-                        onChange={handleSearch}
-                        placeholder="Search meters..."
-                        className="px-4 py-2 w-full max-w-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Search Meter..."
+                        className="px-4 py-2 text-sm border border-gray-300 rounded-lg"
                     />
                 </div>
 
@@ -60,10 +46,10 @@ export default function Dashboard({ meter }) {
                         <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" className="px-6 py-3">
-                                    Department ID
+                                   Department ID
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Meter Name
+                                   Meter Name
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Serial Number
@@ -74,24 +60,24 @@ export default function Dashboard({ meter }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredData.length > 0 ? (
-                                filteredData.map((item) => (
+                            {meter.data.length > 0 ? (
+                                meter.data.map((items) => (
                                     <tr
-                                        key={item.id}
+                                        key={items.id}
                                         className="bg-white border-b hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
                                     >
                                         <td className="px-6 py-4">
-                                            {item.department_name}
+                                            {items.department_name}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {item.meter_name}
+                                            {items.meter_name}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {item.serial_number}
+                                            {items.serial_number}
                                         </td>
                                         <td className="px-6 py-4 flex justify-center space-x-2">
                                             <Link
-                                                href={`/meter/${item.id}`}
+                                                href={`/meter/${items.id}`}
                                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-link"
                                             >
                                                 Show Details
@@ -105,7 +91,7 @@ export default function Dashboard({ meter }) {
                                         colSpan="4"
                                         className="text-center px-6 py-4 text-gray-500"
                                     >
-                                        No meters found.
+                                        No records found.
                                     </td>
                                 </tr>
                             )}
@@ -146,3 +132,5 @@ export default function Dashboard({ meter }) {
         </AuthenticatedLayout>
     );
 }
+
+

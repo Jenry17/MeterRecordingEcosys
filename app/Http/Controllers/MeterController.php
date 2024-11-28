@@ -27,9 +27,9 @@ class MeterController extends Controller
         'meters.department_id', 
         'meters.meter_name',
         'meters.serial_number',
-        'companies.company_name as department_name' // Assuming `name` is a column in `companies`
+        'departments.department_name as department_name'  // Assuming `name` is a column in `departments`
     )
-    ->join('companies', 'companies.id', '=', 'meters.department_id') // Adjust if needed
+    ->join('departments', 'departments.id', '=', 'meters.department_id') // Adjust if needed
     ->when($searchTerm, function($query, $searchTerm) {
         // Apply search filtering if a search term is provided
         $query->where('meters.meter_name', 'like', '%' . $searchTerm . '%')
@@ -61,44 +61,45 @@ class MeterController extends Controller
      */
 
      public function store(Request $request)
-    {
-        sleep(1);
+{
+    sleep(1);
 
-        $fields = $request->validate(rules:[
-            'department_id' => ['required'],
-            'meter_name' => ['required'],
-            'serial_number' => ['required'],
-            'max_digit' => ['required'],
-        ]);
+    // Validate input fields
+    $fields = $request->validate([
+        'department_id' => ['required', 'exists:departments,id'], // Ensure department exists
+        'meter_name' => ['required'],
+        'serial_number' => [
+            'required',
+            Rule::unique('meters')->where(function ($query) use ($request) {
+                return $query
+                    ->where('department_id', $request->department_id)
+                    ->where('meter_name', $request->meter_name);
+            }),
+        ],
+        'max_digit' => ['required', 'numeric'], // Validate numeric value for max_digit
+        'eto' => $request
+    ]);
 
-        Meter::create($fields);
-        return redirect('/meter');
-    }
+    // Create the meter record
+    Meter::create($fields);
 
-    // public function store(Request $request)
+    // Redirect to the meter list
+    return redirect('/meter')->with('success', 'Meter created successfully.');
+}
+
+
+    //  public function store(Request $request)
     // {
     //     sleep(1);
 
-    //     $request->validate([
-    //         'department_id' => 'required|string|max:255',
-    //         'meter_name' => 'required|string|max:255', // No unique rule for meter_name
-    //         'serial_number' => [
-    //             'required',
-    //             'string',
-    //             'max:255',
-    //             Rule::unique('meters', 'serial_number'), // Serial number must still be unique globally
-    //         ],
-    //         'max_digit' => [
-    //             'required',
-    //             'int',
-    //             'max:99999',
-    //             Rule::unique('meters', 'max_digit'),
-    //         ],
+    //     $fields = $request->validate(rules:[
+    //         'department_id' => ['required'],
+    //         'meter_name' => ['required'],
+    //         'serial_number' => ['required'],
+    //         'max_digit' => ['required'],
     //     ]);
 
-    //     // Create the new meter record
-    //     Meter::create($request->only(['department_id', 'meter_name', 'serial_number', 'max_digit']));
-
+    //     Meter::create($fields);
     //     return redirect('/meter');
     // }
 
@@ -119,40 +120,12 @@ class MeterController extends Controller
          ->firstOrFail($id);
  
  
-         return Inertia::render('Modules/Meter/ShowUpdateDelete', [
+         return Inertia::render('Modules/Meters/ShowUpdateDelete', [
              'meter' => $Meterdata,
              'department' => $Departmentdata,
          ]);
      }
      
-
-     
-    // public function show($id)
-    // {    
-    //     /// Fetch the post from the database by its ID
-    //     $meters = meter::findOrFail($id);
-
-    //     // Return the post data to the Inertia page
-    //     return Inertia::render('Modules/Meters/ShowUpdateDelete', [
-    //         'meter' => $meters
-    //     ]);
-    //     // $company = Company::select('id', 'company_name', 'company_code')->get();
-    //     // return Inertia::render('Modules/Company/ShowUpdateDelete', [
-    //     //     'companies' => $company,
-    //     // ]);
-    // }
-
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  */
-    // public function edit(Meter $meter)
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
     public function update(Request $request, $id)
     {
         $data = meter::findOrFail($id);
