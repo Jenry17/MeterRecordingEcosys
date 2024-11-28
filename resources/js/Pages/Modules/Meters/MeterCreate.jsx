@@ -221,11 +221,13 @@ export default function Register({ meter }) {
                     {/* Buttons */}
                     <div className="flex items-center justify-between mt-6">
                         <Link
+                            ref={backButtonRef}
                             href={route("meter.index")}
                             className="px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-md shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
                         >
                             Back
                         </Link>
+                        
 
                         <PrimaryButton
                             className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
