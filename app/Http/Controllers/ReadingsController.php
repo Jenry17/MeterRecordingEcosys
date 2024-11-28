@@ -15,12 +15,13 @@ class ReadingsController extends Controller
 
         $data = Readings::select(
             'readings.id',
+            'readings.reading',
             'readings.reading_date',
             'meters.meter_name as meter_name'
         )
             ->join('meters', 'meters.id', '=', 'readings.meter_id')
             ->when($search, function ($query) use ($search) {
-                $query->where('readings.reading_date', 'like', "%$search%")
+                $query->where('readings.reading', 'like', "%$search%")
                     ->orWhere('meters.meter_name', 'like', "%$search%");
             })
             ->paginate(2);
@@ -36,21 +37,53 @@ class ReadingsController extends Controller
     }
     public function store(Request $request)
     {
-        //
-    }     public function show(Readings $readings)
-    {
-        //
+        sleep(1);
+
+        $fields = $request->validate([
+            'meter_id' => ['required'],
+            'reading' => ['required'],
+            'reading_date' => ['required']
+        ]);
+        Readings::create($fields);
+        return redirect('/reading')->with('fields', $request->all());
     }
-    public function edit(Readings $readings)
+    public function show($id)
     {
-        //
+        $meter  = Meter::select('id', 'meter_name')->get();
+
+        $data = Readings::join('meters', 'meters.id', '=', 'readings.meter_id')
+            ->where('readings.id', $id)
+            ->select(
+                'readings.id',
+                'readings.meter_id',
+                'readings.reading',
+                'readings.reading_date',
+                'meters.meter_name as meter_name'
+            )
+            ->firstOrFail($id);
+
+
+        return Inertia::render('Modules/Readings/ShowUpdateDelete', [
+            'reading' => $data,
+            'meter' => $meter,
+        ]);
     }
-    public function update(Request $request, Readings $readings)
+    public function update(Request $request, $id)
     {
-        //
+        $data = Readings::findOrFail($id);
+        $validated = $request->validate(rules: [
+            'meter_id' => 'required|string|max:255',
+            'reading' => 'required|string|max:255',
+            'reading_date' => 'required|date',
+        ]);
+        $data->update($validated);
+
+        return redirect('/reading');
     }
-    public function destroy(Readings $readings)
+    public function destroy($id)
     {
-        //
+        $data = Readings::findOrFail($id);
+        $data->delete();
+        return redirect('/reading');
     }
 }

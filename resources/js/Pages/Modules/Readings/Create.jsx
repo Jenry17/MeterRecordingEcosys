@@ -9,6 +9,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 export default function Register({ reading }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         meter_id: "",
+        reading: "",
         reading_date: "",
     });
 
@@ -17,11 +18,6 @@ export default function Register({ reading }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredReading, setFilteredReading] = useState(reading);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-
-    const submit = (e) => {
-        e.preventDefault();
-        post(route("reading.store"));
-    };
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -51,6 +47,41 @@ export default function Register({ reading }) {
         }
     }, [searchQuery, reading]);
 
+    // Validate the date format YYYY-MM-DD
+    const validateDateFormat = (date) => {
+        // Regex to match YYYY-MM-DD format
+        const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
+        return regex.test(date);
+    };
+
+    const handleDateChange = (e) => {
+        let value = e.target.value;
+
+        // Remove any non-numeric characters except hyphens
+        value = value.replace(/[^0-9\-]/g, "");
+
+        // Prevent consecutive hyphens (replace multiple hyphens with a single hyphen)
+        value = value.replace(/-+/g, "-");
+
+        // If there are 5 or more characters and no hyphen after the year, insert it
+        if (value.length > 4 && value.charAt(4) !== "-") {
+            value = value.slice(0, 4) + "-" + value.slice(4);
+        }
+
+        // If there are 8 or more characters and no hyphen after the month, insert it
+        if (value.length > 7 && value.charAt(7) !== "-") {
+            value = value.slice(0, 7) + "-" + value.slice(7);
+        }
+
+        // Limit the input to exactly 10 characters: YYYY-MM-DD
+        if (value.length > 10) {
+            value = value.slice(0, 10); // Allow a maximum of 10 characters (YYYY-MM-DD)
+        }
+
+        // Set the formatted value to the state
+        setData("reading_date", value);
+    };
+
     const handleSelectReading = (meterId, meterName) => {
         setData("meter_id", meterId);
         setSearchQuery(meterName);
@@ -63,6 +94,20 @@ export default function Register({ reading }) {
 
     const handleInputBlur = () => {
         setTimeout(() => setDropdownOpen(false), 200);
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        // Validate the date before submitting the form
+        if (!validateDateFormat(data.reading_date)) {
+            alert("Please enter a valid date in YYYY-MM-DD format.");
+            return;
+        }
+
+        // Submit the form if validation passes
+        post(route("reading.store"));
+    
     };
 
     return (
@@ -133,17 +178,31 @@ export default function Register({ reading }) {
                     </div>
 
                     <div className="mb-6">
+                        <InputLabel htmlFor="reading" value="Reading" />
+                        <TextInput
+                            value={data.reading}
+                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => setData("reading", e.target.value)}
+                            required
+                        />
+                        <InputError
+                            message={errors.reading}
+                            className="mt-2 text-sm text-red-600"
+                        />
+                    </div>
+
+                    <div className="mb-6">
                         <InputLabel
                             htmlFor="reading_date"
                             value="Reading Date"
                         />
-                        <TextInput
+                        <input
+                            type="text"
                             value={data.reading_date}
-                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            onChange={(e) =>
-                                setData("reading_date", e.target.value)
-                            }
+                            onChange={handleDateChange}
+                            placeholder="YYYY-MM-DD"
                             required
+                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <InputError
                             message={errors.reading_date}

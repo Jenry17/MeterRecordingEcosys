@@ -49,6 +49,9 @@ export default function Dashboard({ reading, search }) {
                                     Meter Name
                                 </th>
                                 <th scope="col" className="px-6 py-3">
+                                    Reading
+                                </th>
+                                <th scope="col" className="px-6 py-3">
                                     Reading Date
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -65,6 +68,9 @@ export default function Dashboard({ reading, search }) {
                                     >
                                         <td className="px-6 py-4">
                                             {items.meter_name}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {items.reading}
                                         </td>
                                         <td className="px-6 py-4">
                                             {items.reading_date}
