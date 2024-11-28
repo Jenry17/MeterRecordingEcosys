@@ -27,6 +27,7 @@ class MeterController extends Controller
         'meters.department_id', 
         'meters.meter_name',
         'meters.serial_number',
+        'meters.max_digit',
         'departments.department_name as department_name'  // Assuming `name` is a column in `departments`
     )
     ->join('departments', 'departments.id', '=', 'meters.department_id') // Adjust if needed
@@ -35,7 +36,7 @@ class MeterController extends Controller
         $query->where('meters.meter_name', 'like', '%' . $searchTerm . '%')
               ->orWhere('meters.serial_number', 'like', '%' . $searchTerm . '%');
     })
-    ->paginate(5);
+    ->paginate(2);
 
     return Inertia::render('Meters', [
         'meter' => $meterData,
@@ -88,21 +89,6 @@ class MeterController extends Controller
 }
 
 
-    //  public function store(Request $request)
-    // {
-    //     sleep(1);
-
-    //     $fields = $request->validate(rules:[
-    //         'department_id' => ['required'],
-    //         'meter_name' => ['required'],
-    //         'serial_number' => ['required'],
-    //         'max_digit' => ['required'],
-    //     ]);
-
-    //     Meter::create($fields);
-    //     return redirect('/meter');
-    // }
-
      public function show($id)
      {
  
@@ -115,6 +101,7 @@ class MeterController extends Controller
              'meters.department_id',
              'meters.meter_name',
              'meters.serial_number',
+             'meters.max_digit',
              'departments.department_name as department_name' 
          )
          ->firstOrFail($id);
@@ -133,6 +120,7 @@ class MeterController extends Controller
             'department_id' => 'required|string|max:255',
             'meter_name' => 'required|string|max:255',
             'serial_number' => 'required|string|max:255',
+            'max_digit' => 'required|int|max:99999',
 
         ]);
         $data->update($validated);

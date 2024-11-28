@@ -10,16 +10,18 @@ export default function ModalUpdate({ isOpen, onClose, meter, onUpdate }) {
     const departmentidInput = useRef();
     const meterNameInput = useRef();
     const serialNumberInput = useRef();
+    const maxdigitInput = useRef();
 
     const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
         department_id: meter?.department_id || '',
         meter_name: meter?.meter_name || '',
         serial_number: meter?.serial_number || '',
+        max_digit: meter?.max_digit || '',
     });
 
     useEffect(() => {
         if (meter) {
-            setData({ department_id: meter.department_id,  meter_name: meter.meter_name, serial_number: meter.serial_number});
+            setData({ department_id: meter.department_id,  meter_name: meter.meter_name, serial_number: meter.serial_number, max_digit: meter.max_digit});
         }
     }, [meter]);
 
@@ -36,6 +38,7 @@ export default function ModalUpdate({ isOpen, onClose, meter, onUpdate }) {
                 if (errors.department_id) departmentidInput.current.focus();
                 if (errors.meter_name) meterNameInput.current.focus();
                 if (errors.serial_number) serialNumberInput.current.focus();
+                if (errors.max_digit) maxdigitInput.current.focus();
                 
             },
         });
@@ -83,6 +86,38 @@ export default function ModalUpdate({ isOpen, onClose, meter, onUpdate }) {
                         />
                         <InputError message={errors.serial_number} className="mt-2" />
                     </div>
+
+                    <div>
+    <InputLabel htmlFor="max_digit" value="Max Digit" />
+    <TextInput
+        id="max_digit"
+        ref={maxdigitInput}
+        value={data.max_digit}
+        onChange={(e) => {
+            const value = e.target.value;
+            // Allow only numeric input and restrict to 5 digits
+            if (/^\d{0,5}$/.test(value)) {
+                setData('max_digit', value);
+            }
+        }}
+        className="mt-1 block w-full"
+        placeholder="Enter up to 5 digits"
+    />
+    <InputError message={errors.max_digit} className="mt-2" />
+</div>
+
+
+                    {/* <div>
+                        <InputLabel htmlFor="max_digit" value="Max Digit" />
+                        <TextInput
+                            id="max_digit"
+                            ref={maxdigitInput}
+                            value={data.max_digit}
+                            onChange={(e) => setData('max_digit', e.target.value)}
+                            className="mt-1 block w-full"
+                        />
+                        <InputError message={errors.max_digit} className="mt-2" />
+                    </div> */}
 
                     <div className="flex justify-between">
                         <button

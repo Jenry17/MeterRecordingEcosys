@@ -55,6 +55,9 @@ export default function Dashboard({ meter, search }) {
                                     Serial Number
                                 </th>
                                 <th scope="col" className="px-6 py-3">
+                                    Max Digit
+                                </th>
+                                <th scope="col" className="px-6 py-3">
                                     Actions
                                 </th>
                             </tr>
@@ -74,6 +77,9 @@ export default function Dashboard({ meter, search }) {
                                         </td>
                                         <td className="px-6 py-4">
                                             {items.serial_number}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {items.max_digit}
                                         </td>
                                         <td className="px-6 py-4 flex justify-center space-x-2">
                                             <Link
