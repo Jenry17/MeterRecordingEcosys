@@ -24,7 +24,7 @@ class ReadingsController extends Controller
                 $query->where('readings.reading', 'like', "%$search%")
                     ->orWhere('meters.meter_name', 'like', "%$search%");
             })
-            ->paginate(2);
+            ->paginate(10);
 
         return Inertia::render('Reading', ['reading' => $data, 'search' => $search]);
     }
@@ -37,15 +37,52 @@ class ReadingsController extends Controller
     }
     public function store(Request $request)
     {
-        sleep(1);
+        $present_reading = (int)$request->reading;  // Ensure it's treated as an integer
+        $max_digit = 9999;
 
+        // Retrieve the previous reading for the specific meter from the database
+        $previous_reading = Readings::where('meter_id', $request->meter_id)
+            ->orderBy('reading_date', 'desc')
+            ->first();
+
+        // If there is no previous reading, set it to 0 (or you could handle this case differently)
+        if ($previous_reading) {
+            $previous_reading = (int)$previous_reading->reading;  // Ensure previous reading is an integer
+        } else {
+            $previous_reading = 0; // Default value, assuming no previous readings.
+        }
+
+        // Check if present reading is not lower than the previous reading
+        if ($present_reading < $previous_reading) {
+            return redirect()->back()->with('error', 'Present reading cannot be lower than previous reading.');
+        }
+
+        // Continue with the adjusted value calculation
+        $adjusted_value = $max_digit + 1 + $present_reading; // Now all values are integers
+        $new_reading = $adjusted_value - $previous_reading;
+
+        // Validate incoming fields
         $fields = $request->validate([
             'meter_id' => ['required'],
+            'reading_date' => ['required'],
             'reading' => ['required'],
-            'reading_date' => ['required']
         ]);
-        Readings::create($fields);
-        return redirect('/reading')->with('fields', $request->all());
+
+        // Set the new calculated reading
+        $fields['reading'] = $new_reading;
+        $fields['meter_id'] = $request->meter_id;
+        $fields['reading_date'] = $request->reading_date;
+        
+        return  $fields;
+        // Save the new reading to the database
+        // Readings::create($fields);
+
+        // Redirect back with success message
+        // return redirect('/reading')->with('fields', $fields);
+
+
+
+        // sleep(1);
     }
     public function show($id)
     {
