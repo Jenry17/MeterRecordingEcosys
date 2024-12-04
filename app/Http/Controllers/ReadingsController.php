@@ -36,20 +36,16 @@ class ReadingsController extends Controller
         ]);
     }
 
-    // public function store(Request $request)
-    // {
-    //     sleep(1);
-
-    //     $fields = $request->validate([
-    //         'meter_id' => ['required'],
-    //         'reading' => ['required'],
-    //         'reading_date' => ['required']
-    //     ]);
-    //     Readings::create($fields);
-    //     return redirect('/reading')->with('fields', $request->all());
-    // }
-
+    public function store(Request $request)
     {
+        //     $fields = $request->validate([
+        //         'meter_id' => ['required'],
+        //         'reading' => ['required'],
+        //         'reading_date' => ['required']
+        //     ]);
+        //     Readings::create($fields);
+        //     return redirect('/reading')->with('fields', $request->all());
+        // }
         $present_reading = (int)$request->reading;  // Ensure it's treated as an integer
         $max_digit = 9999;
 
@@ -66,9 +62,14 @@ class ReadingsController extends Controller
         }
 
         // Check if present reading is not lower than the previous reading
+
         if ($present_reading < $previous_reading) {
-            return view('reading/create')->with('error', 'Present reading cannot be lower than previous reading.');
+            return Inertia::render('Modules/Readings/Create', [
+                'error' => 'Present reading cannot be lower than previous reading.',
+            ]);
         }
+        // Other logic here if validation passes
+
 
 
         // Continue with the adjusted value calculation
@@ -93,9 +94,6 @@ class ReadingsController extends Controller
 
         // Redirect back with success message
         return redirect('/reading')->with('fields', $fields);
-
-
-
         // sleep(1);
     }
     public function show($id)
