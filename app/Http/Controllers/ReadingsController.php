@@ -54,8 +54,9 @@ class ReadingsController extends Controller
 
         // Check if present reading is not lower than the previous reading
         if ($present_reading < $previous_reading) {
-            return redirect()->back()->with('error', 'Present reading cannot be lower than previous reading.');
+            return view('reading/create')->with('error', 'Present reading cannot be lower than previous reading.');
         }
+
 
         // Continue with the adjusted value calculation
         $adjusted_value = $max_digit + 1 + $present_reading; // Now all values are integers
@@ -72,13 +73,13 @@ class ReadingsController extends Controller
         $fields['reading'] = $new_reading;
         $fields['meter_id'] = $request->meter_id;
         $fields['reading_date'] = $request->reading_date;
-        
-        return  $fields;
+
+        // return  $fields;
         // Save the new reading to the database
-        // Readings::create($fields);
+        Readings::create($fields);
 
         // Redirect back with success message
-        // return redirect('/reading')->with('fields', $fields);
+        return redirect('/reading')->with('fields', $fields);
 
 
 
