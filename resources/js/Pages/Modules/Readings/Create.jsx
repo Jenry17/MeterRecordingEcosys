@@ -6,11 +6,12 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-export default function Register({ reading }) {
+export default function Register({ reading, datas }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         meter_id: "",
         reading: "",
         reading_date: "",
+        datas: "",
     });
 
     const backButtonRef = useRef(null);
@@ -97,7 +98,6 @@ export default function Register({ reading }) {
         }
 
         post(route("reading.store"));
-    
     };
 
     return (
@@ -196,6 +196,23 @@ export default function Register({ reading }) {
                         />
                         <InputError
                             message={errors.reading_date}
+                            className="mt-2 text-sm text-red-600"
+                        />
+                    </div>
+
+                    <div className="mb-6">
+                        <InputLabel
+                            htmlFor="previous_reading"
+                            value="Previous Reading"
+                        />
+                        <input
+                            type="hidden" // This makes the input invisible
+                            value={datas}
+                            onChange={handleDateChange}
+                            required
+                        />
+                        <InputError
+                            message={errors.datas}
                             className="mt-2 text-sm text-red-600"
                         />
                     </div>
