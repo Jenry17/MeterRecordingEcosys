@@ -35,7 +35,20 @@ class ReadingsController extends Controller
             'reading' => $data,
         ]);
     }
-    public function store(Request $request)
+
+    // public function store(Request $request)
+    // {
+    //     sleep(1);
+
+    //     $fields = $request->validate([
+    //         'meter_id' => ['required'],
+    //         'reading' => ['required'],
+    //         'reading_date' => ['required']
+    //     ]);
+    //     Readings::create($fields);
+    //     return redirect('/reading')->with('fields', $request->all());
+    // }
+
     {
         $present_reading = (int)$request->reading;  // Ensure it's treated as an integer
         $max_digit = 9999;
