@@ -97,7 +97,6 @@ export default function Register({ reading }) {
         }
 
         post(route("reading.store"));
-    
     };
 
     return (
@@ -199,6 +198,23 @@ export default function Register({ reading }) {
                             className="mt-2 text-sm text-red-600"
                         />
                     </div>
+
+                    {/* <div className="mb-6">
+                        <InputLabel
+                            htmlFor="previous_reading"
+                            value="Previous Reading"
+                        />
+                        <input
+                            type="hidden" // This makes the input invisible
+                            value={datas}
+                            onChange={handleDateChange}
+                            required
+                        />
+                        <InputError
+                            message={errors.datas}
+                            className="mt-2 text-sm text-red-600"
+                        />
+                    </div> */}
 
                     <div className="flex items-center justify-between mt-6">
                         <Link
