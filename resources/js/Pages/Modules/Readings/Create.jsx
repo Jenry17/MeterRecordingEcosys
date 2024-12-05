@@ -6,12 +6,11 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-export default function Register({ reading, datas }) {
+export default function Register({ reading }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         meter_id: "",
         reading: "",
         reading_date: "",
-        datas: "",
     });
 
     const backButtonRef = useRef(null);
@@ -200,7 +199,7 @@ export default function Register({ reading, datas }) {
                         />
                     </div>
 
-                    <div className="mb-6">
+                    {/* <div className="mb-6">
                         <InputLabel
                             htmlFor="previous_reading"
                             value="Previous Reading"
@@ -215,7 +214,7 @@ export default function Register({ reading, datas }) {
                             message={errors.datas}
                             className="mt-2 text-sm text-red-600"
                         />
-                    </div>
+                    </div> */}
 
                     <div className="flex items-center justify-between mt-6">
                         <Link

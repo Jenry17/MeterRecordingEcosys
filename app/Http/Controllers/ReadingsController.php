@@ -30,15 +30,14 @@ class ReadingsController extends Controller
     }
     public function create(Request $request)
     {
-        $data = Readings::where('meter_id', $request->meter_id)
-        ->select('reading')  // Select only the 'reading' field
-        ->orderBy('id', 'desc')  // Order by the 'id' (assuming it's auto-incremented)
-        ->first();  // Get the first record (most recent)
+        // $datas = Readings::orderBy('id', 'desc')  // Order by the 'id' (assuming it's auto-incremented)
+        // ->value('reading');  // Get the value of the 'reading' field
+
         $meterData = Meter::select('id', 'meter_name')->get();
 
         return Inertia::render('Modules/Readings/Create', [
             'reading' => $meterData,
-            'datas' => $data,
+            // 'datas' => $datas,
         ]);
     }
 
@@ -57,26 +56,27 @@ class ReadingsController extends Controller
         $present_reading = (int)$request->reading;  // Ensure it's treated as an integer
         $max_digit = 9999;
 
-        $previous_reading = $request->data;
-
         // Retrieve the previous reading for the specific meter from the database
         // $previous_reading = Readings::where('meter_id', $request->meter_id)
         //     ->select('reading')  // Select only the 'reading' field
         //     ->orderBy('id', 'desc')  // Order by the 'id' (assuming it's auto-incremented)
         //     ->first();  // Get the first record (most recent)
 
+        // $previous_reading = Readings::where('meter_id', $request->meter_id)
+        // ->orderBy('id', 'desc')  // Order by the 'id' (assuming it's auto-incremented)
+        // ->value('reading');  // Get the value of the 'reading' field
 
-        // If there is no previous reading, set it to 0 (or you could handle this case differently)
-        if ($previous_reading) {
-            $previous_reading = (int)$previous_reading->reading;  // Ensure previous reading is an integer
-        } else {
-            $previous_reading = 0; // Default value, assuming no previous readings.
-        }
+
+        $previous_reading = Readings::where('meter_id', $request->meter_id)
+            ->orderBy('id', 'desc')
+            ->value('reading');
+
+        $previous_reading = is_numeric($previous_reading) ? (int)$previous_reading : null;
 
         // Check if present reading is not lower than the previous reading
         if ($present_reading < $previous_reading) {
             // return $previous_reading  . $present_reading;
-            return redirect('/reading')->with('');
+            return redirect()->route('reading.resetMeter')->with('success', 'Meter has been reset!');
         }
 
         // Adjusted reading logic based on max_digit
@@ -115,6 +115,11 @@ class ReadingsController extends Controller
 
         // // Redirect back with success message
         // return redirect('/reading')->with('fields', $fields);
+    }
+    
+    public function resetMeter()
+    {
+        return "ETO NA KO TAGURO!";
     }
     public function show($id)
     {

@@ -31,6 +31,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth:sanctum'])->resource('/company', CompanyController::class);
 Route::middleware(['auth:sanctum'])->resource('/department', DepartmentController::class);
 Route::middleware(['auth:sanctum'])->resource('/meter', MeterController::class);
-Route::middleware(['auth:sanctum'])->resource('/reading', ReadingsController::class);
+
+Route::middleware(['auth:sanctum'])->group(function(){
+Route::resource('/reading', ReadingsController::class);
+Route::get('/reading/reset', [ReadingsController::class, 'resetMeter'])->name('reading.resetMeter');
+});
 
 require __DIR__.'/auth.php';
