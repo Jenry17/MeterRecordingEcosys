@@ -24,7 +24,7 @@ class ReadingsController extends Controller
                 $query->where('readings.reading', 'like', "%$search%")
                     ->orWhere('meters.meter_name', 'like', "%$search%");
             })
-            ->paginate(10);
+            ->paginate(2);
 
         return Inertia::render('Reading', ['reading' => $data, 'search' => $search]);
     }
