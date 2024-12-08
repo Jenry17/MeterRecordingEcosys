@@ -76,7 +76,9 @@ class ReadingsController extends Controller
         // Check if present reading is not lower than the previous reading
         if ($present_reading < $previous_reading) {
             // return $previous_reading  . $present_reading;
-            return redirect()->route('reading.resetMeter')->with('success', 'Meter has been reset!');
+
+            // icheck kung yung present reading ay mas mataas sa previous reading at kung lalampas sa max digit pag nag true sa both condition
+            return redirect('/reading/reset')->with('success', 'Meter has been reset!');
         }
 
         // Adjusted reading logic based on max_digit
@@ -119,7 +121,7 @@ class ReadingsController extends Controller
     
     public function resetMeter()
     {
-        return "ETO NA KO TAGURO!";
+        return "taguro";
     }
     public function show($id)
     {

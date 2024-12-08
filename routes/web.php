@@ -34,7 +34,7 @@ Route::middleware(['auth:sanctum'])->resource('/meter', MeterController::class);
 
 Route::middleware(['auth:sanctum'])->group(function(){
 Route::resource('/reading', ReadingsController::class);
-Route::get('/reading/reset', [ReadingsController::class, 'resetMeter'])->name('reading.resetMeter');
+Route::get('/reading/reset', [ReadingsController::class, 'resetMeter'])->middleware(['auth', 'verified'])->name('reading.resetMeter');
 });
 
 require __DIR__.'/auth.php';
