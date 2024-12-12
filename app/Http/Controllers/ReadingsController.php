@@ -17,6 +17,7 @@ class ReadingsController extends Controller
             'readings.id',
             'readings.reading',
             'readings.reading_date',
+            'readings.consumption', // Include consumption
             'meters.meter_name as meter_name'
         )
             ->join('meters', 'meters.id', '=', 'readings.meter_id')
@@ -25,7 +26,7 @@ class ReadingsController extends Controller
                     ->orWhere('meters.meter_name', 'like', "%$search%");
             })
             ->paginate(10);
-
+            
         return Inertia::render('Reading', ['reading' => $data, 'search' => $search]);
     }
     public function create(Request $request)
