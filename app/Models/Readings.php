@@ -11,7 +11,9 @@ class Readings extends Model
 
     protected $fillable = [
         'meter_id',
+        'consumption',
         'reading',
         'reading_date',
+        
     ];
 }

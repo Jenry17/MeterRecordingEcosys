@@ -165,6 +165,7 @@ export default function Register({ reading }) {
                             className="mt-2 text-sm text-red-600"
                         />
                     </div>
+                    
 
                     <div className="mb-6">
                         <InputLabel htmlFor="reading" value="Reading" />
