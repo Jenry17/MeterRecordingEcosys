@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import InputLabel from "@/Components/InputLabel";
 import { Head, useForm, Link } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";

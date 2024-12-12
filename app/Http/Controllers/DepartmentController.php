@@ -28,7 +28,7 @@ class DepartmentController extends Controller
                 $query->where('departments.department_name', 'like', "%$search%")
                     ->orWhere('companies.company_name', 'like', "%$search%");
             })
-            ->paginate(2);
+            ->paginate(10);
 
         return Inertia::render('Department', ['department' => $data, 'search' => $search]);
     }
@@ -80,7 +80,7 @@ class DepartmentController extends Controller
         $validated = $request->validate(rules: [
             'department_name' => 'required|string|max:255',
             'department_code' => 'required|string|max:255',
-            'company_id' => 'required|string|max:255',
+            'company_id' => 'required|integer|max:255',
 
         ]);
         $data->update($validated);

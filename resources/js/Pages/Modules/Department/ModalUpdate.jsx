@@ -9,7 +9,6 @@ import { Transition } from "@headlessui/react";
 export default function ModalUpdate({ isOpen, onClose, department, companies, onUpdate }) {
     const departmentNameInput = useRef();
     const departmentCodeInput = useRef();
-    const readingDateInput = useRef();
 
     const {
         data,
@@ -24,7 +23,6 @@ export default function ModalUpdate({ isOpen, onClose, department, companies, on
         department_code: department?.department_code || "",
         company_id: department?.company_id || "",
         company_name: department?.company_name || "",
-        reading_date: department?.reading_date || "",  // Add reading_date to the form
     });
 
     useEffect(() => {
@@ -34,31 +32,9 @@ export default function ModalUpdate({ isOpen, onClose, department, companies, on
                 department_code: department.department_code,
                 company_id: department.company_id,
                 company_name: department?.company_name || "",
-                reading_date: department?.reading_date || "", // Initialize the reading_date
             });
         }
     }, [department]);
-
-    const handleDateChange = (e) => {
-        let value = e.target.value;
-
-        // Remove non-numeric characters except hyphens and limit to valid date format (YYYY-MM-DD)
-        value = value.replace(/[^0-9\-]/g, "").replace(/-+/g, "-");
-
-        if (value.length > 4 && value.charAt(4) !== "-") {
-            value = value.slice(0, 4) + "-" + value.slice(4);
-        }
-
-        if (value.length > 7 && value.charAt(7) !== "-") {
-            value = value.slice(0, 7) + "-" + value.slice(7);
-        }
-
-        if (value.length > 10) {
-            value = value.slice(0, 10); // Restrict input to 10 characters: YYYY-MM-DD
-        }
-
-        setData("reading_date", value);  // Update state with formatted date
-    };
 
     const updateDepartment = (e) => {
         e.preventDefault();
@@ -72,7 +48,6 @@ export default function ModalUpdate({ isOpen, onClose, department, companies, on
             onError: (errors) => {
                 if (errors.department_name) departmentNameInput.current.focus();
                 if (errors.department_code) departmentCodeInput.current.focus();
-                if (errors.reading_date) readingDateInput.current.focus(); // Focus on reading_date if error
             },
         });
     };
@@ -126,21 +101,6 @@ export default function ModalUpdate({ isOpen, onClose, department, companies, on
                             ))}
                         </select>
                         <InputError message={errors.company_name} className="mt-2 text-sm text-red-600" />
-                    </div>
-
-                    <div>
-                        <InputLabel htmlFor="reading_date" value="Reading Date (YYYY-MM-DD)" />
-                        <input
-                            id="reading_date"
-                            type="text"
-                            value={data.reading_date}
-                            onChange={handleDateChange}
-                            placeholder="YYYY-MM-DD"
-                            required
-                            ref={readingDateInput}
-                            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <InputError message={errors.reading_date} className="mt-2 text-sm text-red-600" />
                     </div>
 
                     <div className="flex justify-between">

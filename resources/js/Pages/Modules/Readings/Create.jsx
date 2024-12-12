@@ -74,6 +74,19 @@ export default function Register({ reading }) {
         setData("reading_date", value);
     };
 
+    const handleReadingChange = (e) => {
+        const value = e.target.value;
+
+        // Ensure the value is a number and within the range
+        if (parseInt(value) > 10000) {
+            // Optionally, you can show an alert or a message
+            alert("Reading cannot be greater than 10,000.");
+            setData("reading", 10000); // Set the value to the max allowed value if it exceeds
+        } else {
+            setData("reading", value); // Otherwise, update the reading value
+        }
+    };
+
     const handleSelectReading = (meterId, meterName) => {
         setData("meter_id", meterId);
         setSearchQuery(meterName);
@@ -165,14 +178,28 @@ export default function Register({ reading }) {
                             className="mt-2 text-sm text-red-600"
                         />
                     </div>
-                    
 
-                    <div className="mb-6">
+                    {/* <div className="mb-6">
                         <InputLabel htmlFor="reading" value="Reading" />
                         <TextInput
                             value={data.reading}
                             className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             onChange={(e) => setData("reading", e.target.value)}
+                            required
+                        />
+                        <InputError
+                            message={errors.reading}
+                            className="mt-2 text-sm text-red-600"
+                        />
+                    </div> */}
+
+                    <div className="mb-6">
+                        <InputLabel htmlFor="reading" value="Reading" />
+                        <TextInput
+                            type="number" // Ensure it's treated as a number input
+                            value={data.reading}
+                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={handleReadingChange} // Use the new handleReadingChange function
                             required
                         />
                         <InputError
@@ -199,23 +226,6 @@ export default function Register({ reading }) {
                             className="mt-2 text-sm text-red-600"
                         />
                     </div>
-
-                    {/* <div className="mb-6">
-                        <InputLabel
-                            htmlFor="previous_reading"
-                            value="Previous Reading"
-                        />
-                        <input
-                            type="hidden" // This makes the input invisible
-                            value={datas}
-                            onChange={handleDateChange}
-                            required
-                        />
-                        <InputError
-                            message={errors.datas}
-                            className="mt-2 text-sm text-red-600"
-                        />
-                    </div> */}
 
                     <div className="flex items-center justify-between mt-6">
                         <Link
