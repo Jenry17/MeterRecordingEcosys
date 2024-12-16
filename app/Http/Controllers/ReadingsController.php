@@ -1,12 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Inertia\Inertia;
 use App\Models\Readings;
 use App\Models\Meter;
 use Illuminate\Http\Request;
-
 class ReadingsController extends Controller
 {
     public function index(Request $request)
@@ -17,7 +15,7 @@ class ReadingsController extends Controller
             'readings.id',
             'readings.reading',
             'readings.reading_date',
-            'readings.consumption', // Include consumption
+            'readings.consumption',
             'meters.meter_name as meter_name'
         )
             ->join('meters', 'meters.id', '=', 'readings.meter_id')
@@ -38,49 +36,58 @@ class ReadingsController extends Controller
     }
     public function store(Request $request)
     {
-        $present_reading = (int) $request->reading;  // Ensure it's treated as an integer
+        $present_reading = (int) $request->reading;
         $max_digit = 9999;
 
-        // Retrieve the previous reading for the specific meter from the database
-        $previous_reading = Readings::where('meter_id', $request->meter_id)
+        $previous_reading_data = Readings::where('meter_id', $request->meter_id)
             ->orderBy('id', 'desc')
-            ->value('reading');
+            ->first();
 
-        $previous_reading = is_numeric($previous_reading) ? (int) $previous_reading : null;
+        $previous_reading = $previous_reading_data && is_numeric($previous_reading_data->reading)
+            ? (int) $previous_reading_data->reading
+            : null;
+
+        $previous_reading_date = $previous_reading_data ? $previous_reading_data->reading_date : null;
+
+        if ($previous_reading_date && date('Y-m', strtotime($request->reading_date)) == date('Y-m', strtotime($previous_reading_date))) {
+            return redirect('/reading')->with('error', 'The reading date cannot be in the same month and year as the previous reading.');
+        }
+
+        if ($previous_reading_date && strtotime($request->reading_date) <= strtotime($previous_reading_date)) {
+            return redirect('/reading')->with('error', 'The provided reading date must be later than the previous reading date.');
+        }
 
         if (is_null($previous_reading)) {
-            // Handle case where there is no previous reading (e.g., first entry)
             Readings::create([
                 'meter_id' => $request->meter_id,
                 'reading' => $present_reading,
                 'reading_date' => $request->reading_date,
-                'consumption' => $present_reading // No consumption as it's the first reading
+                'consumption' => $present_reading
             ]);
 
             return redirect('/reading')->with('success', 'First reading saved successfully.');
         }
 
-        $max_variable = $max_digit + 1; // Total number of values before meter resets
-        $consumption = 0; // Initialize consumption variable
+        $max_variable = $max_digit + 1;
+        $consumption = 0;
 
         if ($present_reading < $previous_reading) {
-            // Handle case where the meter has reset (rolled over)
             $consumption = ($max_variable - $previous_reading) + $present_reading;
         } else {
-            // Normal case where the meter hasn't reset
             $consumption = $present_reading - $previous_reading;
         }
 
-        // Save the new reading to the database
         Readings::create([
             'meter_id' => $request->meter_id,
             'reading' => $present_reading,
             'reading_date' => $request->reading_date,
-            'consumption' => $consumption // Assuming you have a consumption column
+            'consumption' => $consumption
         ]);
 
         return redirect('/reading')->with('success', 'Reading saved successfully.');
     }
+
+
     public function show($id)
     {
         $meter  = Meter::select('id', 'meter_name')->get();
