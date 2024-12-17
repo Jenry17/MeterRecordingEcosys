@@ -52,7 +52,6 @@ class ReadingsController extends Controller
         $previous_reading_date = $previous_reading_data ? $previous_reading_data->reading_date : null;
 
         if ($previous_reading_date && date('Y-m', strtotime($request->reading_date)) == date('Y-m', strtotime($previous_reading_date))) {
-            // Use validation to return a structured error message as an object
             return redirect('/reading/create')->withErrors([
                 'reading_date' => 'The reading date cannot be in the same month and year as the previous reading.'
             ]);

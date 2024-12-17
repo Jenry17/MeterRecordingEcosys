@@ -5,7 +5,7 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import ErrorModal from "@/Components/ErrorModal"; // Import ErrorModal component
+import ErrorModal from "@/Components/ErrorModal";
 
 export default function Register({ reading }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -19,8 +19,8 @@ export default function Register({ reading }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredReading, setFilteredReading] = useState(reading);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-    const [showModal, setShowModal] = useState(false); // State for modal visibility
-    const [modalMessage, setModalMessage] = useState(""); // State for modal message
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -79,13 +79,12 @@ export default function Register({ reading }) {
     const handleReadingChange = (e) => {
         const value = e.target.value;
 
-        // Ensure the value is a number and within the range
         if (parseInt(value) > 10000) {
             setModalMessage("Reading cannot be greater than 10,000.");
-            setShowModal(true); // Show the modal with the error message
-            setData("reading", 10000); // Optionally, reset the value to the max allowed
+            setShowModal(true);
+            setData("reading", 10000);
         } else {
-            setData("reading", value); // Otherwise, update the reading value
+            setData("reading", value);
         }
     };
 
@@ -114,10 +113,9 @@ export default function Register({ reading }) {
 
         post(route("reading.store"), {
             onSuccess: () => {
-                // Reset or perform any success-related actions here
             },
             onError: (errors) => {
-                console.log(errors); // Check the structure of errors
+                console.log(errors);
                 setModalMessage(errors.reading_date || "Something went wrong.");
                 setShowModal(true);
             },
@@ -248,7 +246,6 @@ export default function Register({ reading }) {
                 </form>
             </div>
 
-            {/* Modal for displaying errors */}
             <ErrorModal
                 showModal={showModal}
                 message={modalMessage}
