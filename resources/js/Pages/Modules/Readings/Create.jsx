@@ -112,8 +112,7 @@ export default function Register({ reading }) {
         }
 
         post(route("reading.store"), {
-            onSuccess: () => {
-            },
+            onSuccess: () => {},
             onError: (errors) => {
                 console.log(errors);
                 setModalMessage(errors.reading_date || "Something went wrong.");
@@ -215,10 +214,11 @@ export default function Register({ reading }) {
                             value="Reading Date"
                         />
                         <input
-                            type="text"
+                            type="date"
                             value={data.reading_date}
-                            onChange={handleDateChange}
-                            placeholder="YYYY-MM-DD"
+                            onChange={(e) =>
+                                setData("reading_date", e.target.value)
+                            }
                             required
                             className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
