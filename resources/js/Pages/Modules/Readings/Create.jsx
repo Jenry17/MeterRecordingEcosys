@@ -5,6 +5,7 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import ErrorModal from "@/Components/ErrorModal"; // Import ErrorModal component
 
 export default function Register({ reading }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -18,6 +19,8 @@ export default function Register({ reading }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredReading, setFilteredReading] = useState(reading);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const [showModal, setShowModal] = useState(false); // State for modal visibility
+    const [modalMessage, setModalMessage] = useState(""); // State for modal message
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -56,7 +59,6 @@ export default function Register({ reading }) {
         let value = e.target.value;
 
         value = value.replace(/[^0-9\-]/g, "");
-
         value = value.replace(/-+/g, "-");
 
         if (value.length > 4 && value.charAt(4) !== "-") {
@@ -79,9 +81,9 @@ export default function Register({ reading }) {
 
         // Ensure the value is a number and within the range
         if (parseInt(value) > 10000) {
-            // Optionally, you can show an alert or a message
-            alert("Reading cannot be greater than 10,000.");
-            setData("reading", 10000); // Set the value to the max allowed value if it exceeds
+            setModalMessage("Reading cannot be greater than 10,000.");
+            setShowModal(true); // Show the modal with the error message
+            setData("reading", 10000); // Optionally, reset the value to the max allowed
         } else {
             setData("reading", value); // Otherwise, update the reading value
         }
@@ -105,11 +107,26 @@ export default function Register({ reading }) {
         e.preventDefault();
 
         if (!validateDateFormat(data.reading_date)) {
-            alert("Please enter a valid date in YYYY-MM-DD format.");
+            setModalMessage("Please enter a valid date in YYYY-MM-DD format.");
+            setShowModal(true);
             return;
         }
 
-        post(route("reading.store"));
+        post(route("reading.store"), {
+            onSuccess: () => {
+                // Reset or perform any success-related actions here
+            },
+            onError: (errors) => {
+                console.log(errors); // Check the structure of errors
+                setModalMessage(errors.reading_date || "Something went wrong.");
+                setShowModal(true);
+            },
+        });
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setModalMessage("");
     };
 
     return (
@@ -179,27 +196,13 @@ export default function Register({ reading }) {
                         />
                     </div>
 
-                    {/* <div className="mb-6">
-                        <InputLabel htmlFor="reading" value="Reading" />
-                        <TextInput
-                            value={data.reading}
-                            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            onChange={(e) => setData("reading", e.target.value)}
-                            required
-                        />
-                        <InputError
-                            message={errors.reading}
-                            className="mt-2 text-sm text-red-600"
-                        />
-                    </div> */}
-
                     <div className="mb-6">
                         <InputLabel htmlFor="reading" value="Reading" />
                         <TextInput
-                            type="number" // Ensure it's treated as a number input
+                            type="number"
                             value={data.reading}
                             className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            onChange={handleReadingChange} // Use the new handleReadingChange function
+                            onChange={handleReadingChange}
                             required
                         />
                         <InputError
@@ -244,6 +247,13 @@ export default function Register({ reading }) {
                     </div>
                 </form>
             </div>
+
+            {/* Modal for displaying errors */}
+            <ErrorModal
+                showModal={showModal}
+                message={modalMessage}
+                onClose={handleCloseModal}
+            />
         </AuthenticatedLayout>
     );
 }

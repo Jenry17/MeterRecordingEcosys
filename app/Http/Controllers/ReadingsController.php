@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Inertia\Inertia;
 use App\Models\Readings;
 use App\Models\Meter;
 use Illuminate\Http\Request;
+
 class ReadingsController extends Controller
 {
     public function index(Request $request)
@@ -50,11 +52,16 @@ class ReadingsController extends Controller
         $previous_reading_date = $previous_reading_data ? $previous_reading_data->reading_date : null;
 
         if ($previous_reading_date && date('Y-m', strtotime($request->reading_date)) == date('Y-m', strtotime($previous_reading_date))) {
-            return redirect('/reading')->with('error', 'The reading date cannot be in the same month and year as the previous reading.');
+            // Use validation to return a structured error message as an object
+            return redirect('/reading/create')->withErrors([
+                'reading_date' => 'The reading date cannot be in the same month and year as the previous reading.'
+            ]);
         }
 
         if ($previous_reading_date && strtotime($request->reading_date) <= strtotime($previous_reading_date)) {
-            return redirect('/reading')->with('error', 'The provided reading date must be later than the previous reading date.');
+            return redirect('/reading/create')->withErrors([
+                'reading_date' => 'The provided reading date must be later than the previous reading date.'
+            ]);
         }
 
         if (is_null($previous_reading)) {
@@ -86,8 +93,6 @@ class ReadingsController extends Controller
 
         return redirect('/reading')->with('success', 'Reading saved successfully.');
     }
-
-
     public function show($id)
     {
         $meter  = Meter::select('id', 'meter_name')->get();
